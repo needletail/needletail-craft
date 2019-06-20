@@ -2,8 +2,6 @@
 
 Needletail Search and Index package for Craft 3.x
 
-![Screenshot](resources/img/plugin-logo.png)
-
 ## Requirements
 
 This plugin requires Craft CMS 3.0.0-beta.23 or later.
@@ -24,15 +22,15 @@ To install the plugin, follow these instructions.
 
 ## Needletail Overview
 
--Insert text here-
+To be added
 
 ## Configuring Needletail
 
--Insert text here-
+To be added
 
 ## Using Needletail
 
--Insert text here-
+To be added
 
 ## Needletail Roadmap
 

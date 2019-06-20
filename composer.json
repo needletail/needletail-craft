@@ -1,8 +1,8 @@
 {
-    "name": "needletail/needletail-craft",
+    "name": "needletail/needletail-craft3",
     "description": "Needletail Search and Index package for Craft 3.x",
     "type": "craft-plugin",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "keywords": [
         "craft",
         "cms",
@@ -36,7 +36,7 @@
         "handle": "needletail",
         "hasCpSettings": true,
         "hasCpSection": true,
-        "changelogUrl": "???",
+        "changelogUrl": "https://raw.githubusercontent.com/needletail-io/needletail-craft3/master/CHANGELOG.md",
         "class": "needletail\\needletail\\Needletail"
     }
 }
