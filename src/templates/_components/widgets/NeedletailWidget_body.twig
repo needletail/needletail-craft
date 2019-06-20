@@ -1,0 +1,20 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Needletail plugin for Craft CMS
+ *
+ * NeedletailWidget Widget Body
+ *
+ * @author    Needletail
+ * @copyright Copyright (c) 2019 Needletail
+ * @link      https://needletail.io
+ * @package   Needletail
+ * @since     1.0.0
+ */
+#}
+
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@needletail/needletail/assetbundles/needletailwidgetwidget/dist', true) ~ '/img/NeedletailWidget-icon.svg' %}
+
+<img src="{{ iconUrl }}" height="64" width="64" />
+
+<p>{{ message }}</p>

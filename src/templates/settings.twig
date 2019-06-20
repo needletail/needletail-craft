@@ -1,0 +1,41 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Needletail plugin for Craft CMS 3.x
+ *
+ * Needletail Settings.twig
+ *
+ * @author    Needletail
+ * @copyright Copyright (c) 2019 Needletail
+ * @link      https://needletail.io
+ * @package   Needletail
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% set logo = view.getAssetManager().getPublishedUrl('@needletail/needletail/assetbundles/needletail/dist', true) ~ '/img/logo.svg' %}
+{% do view.registerAssetBundle("needletail\\needletail\\assetbundles\\needletail\\NeedletailAsset") %}
+
+
+<img src="{{ logo }}" class="" />
+{{ needletail.getRegistrationUrl }}
+
+{{ forms.autosuggestField({
+    label: 'API Read Key',
+    instructions: 'The public API key used for searching documents in Needletail.',
+    id: 'apiReadKey',
+    name: 'apiReadKey',
+    value: settings['apiReadKey'],
+    suggestEnvVars: true})
+}}
+
+{{ forms.autosuggestField({
+    label: 'API Write Key',
+    instructions: 'The private API key used for indexing new documents to Needletail.',
+    id: 'apiWriteKey',
+    name: 'apiWriteKey',
+    value: settings['apiWriteKey'],
+    suggestEnvVars: true})
+}}

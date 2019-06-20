@@ -1,0 +1,64 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import 'needletail/_macros' as needletailMacro %}
+{% import '_includes/forms' as forms %}
+
+{% set classes = ['complex-field'] %}
+
+
+{% for blocktype in field.blocktypes %}
+    {% if blocktype.fields | length %}
+        <tr>
+            <td class="col-field">
+                <div class="field">
+                    <div class="heading">
+                        <label class="">{{ name }}</label>
+                        <div class="instructions">
+                            <code>{{ blocktype.name }}</code>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td class="col-enable">
+                {% set blockPath = [ handle, 'blocks', blocktype.handle ] %}
+                {% set enabled = hash_get(bucket.fieldMapping, blockPath | join('.') ~ '.enabled') ?: '' %}
+
+                {% namespace 'fieldMapping[' ~ blockPath | join('][') ~ ']' %}
+                    {{ forms.lightSwitch({
+                        name: 'enabled',
+                        on: enabled
+                    }) }}
+                {% endnamespace %}
+            </td>
+
+            <td class="col-default">
+            </td>
+        </tr>
+
+        {% set classes = classes | merge(['element-sub-field']) %}
+        {% for blocktypefield in blocktype.fields %}
+            {% set nameLabel = blocktype.name ~ ': ' ~ blocktypefield.name %}
+            {% set instructionsHandle = handle ~ '[' ~ blocktype.handle ~ '][' ~ blocktypefield.handle ~ ']' %}
+
+            {% set parentPath = [ handle, 'blocks', blocktype.handle, 'fields', blocktypefield.handle ] %}
+
+            {% set fieldClass = craft.needletail.fields.getRegisteredField(className(blocktypefield)) %}
+            {% set template = fieldClass.getMappingTemplate() %}
+
+            {% include template ignore missing with {
+                field: blocktypefield,
+                handle: blocktypefield.handle,
+                path: parentPath,
+                classes: classes
+            } %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}

@@ -1,0 +1,42 @@
+{
+    "name": "needletail/needletail-craft",
+    "description": "Needletail Search and Index package for Craft 3.x",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "needletail"
+    ],
+    "support": {
+        "docs": "???",
+        "issues": "???"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Needletail",
+            "homepage": "https://needletail.io"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.1.0",
+        "needletail/needletail-php": "^1.0",
+        "illuminate/support": "^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "needletail\\needletail\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Needletail",
+        "handle": "needletail",
+        "hasCpSettings": true,
+        "hasCpSection": true,
+        "changelogUrl": "???",
+        "class": "needletail\\needletail\\Needletail"
+    }
+}

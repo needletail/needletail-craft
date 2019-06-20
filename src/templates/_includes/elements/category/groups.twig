@@ -1,0 +1,13 @@
+{% import '_includes/forms' as forms %}
+
+{% set categories = element.groups %}
+
+{{ forms.selectField({
+    label: "Category Group" | t('needletail'),
+    instructions: 'Choose the category group you want to index.' | t('needletail'),
+    id: 'elementData-' ~ elementType,
+    name: 'elementData[' ~ elementType ~ ']',
+    options: craft.needletail.getSelectOptions(categories),
+    value: bucket.elementData[elementType] ?? '',
+    required: true,
+}) }}

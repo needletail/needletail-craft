@@ -1,0 +1,136 @@
+{% if bucket.elementData %}
+    {% set sectionId = bucket.elementData[bucket.elementType].section %}
+    {% set entryTypeId = bucket.elementData[bucket.elementType].entryType %}
+
+    {% set section = craft.app.sections.getSectionById(sectionId) %}
+    {% set entryType = craft.app.sections.getEntryTypeById(entryTypeId) %}
+{% endif %}
+
+{% set fields = [{
+    name: 'Title',
+    handle: 'title',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Slug',
+    handle: 'slug',
+    instructions: 'If not set, the Slug will be automatically created from Title.' | t('needletail'),
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'URL',
+    handle: 'url',
+    instructions: 'The entry URL.' | t('needletail'),
+    default: {
+        type: 'text',
+    },
+}] %}
+
+{% if section.type == 'structure' %}
+    {% set entries = [{ label: 'Don\'t import', value: '' }] %}
+
+    {% for entry in craft.entries({ sectionId: sectionId }).all() %}
+        {% set entries = entries | merge([{ label: entry.title | slice(0, 40), value: entry.id }]) %}
+    {% endfor %}
+
+    {% set fields = fields | merge([{
+        type: 'entries',
+        name: 'Parent',
+        handle: 'parent',
+        instructions: 'Select a parent entry to import these entries under.' | t('needletail'),
+        default: {
+            type: 'select',
+            options: entries,
+        },
+    }]) %}
+{% endif %}
+
+
+{% set fields = fields | merge([{
+    type: 'date',
+    name: 'Post Date',
+    handle: 'postDate',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('needletail'),
+    default: {
+        type: 'dateTime',
+    },
+}, {
+    type: 'date',
+    name: 'Expiry Date',
+    handle: 'expiryDate',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('needletail'),
+    default: {
+        type: 'dateTime',
+    },
+}]) %}
+
+{% set fields = fields | merge([{
+    type: 'users',
+    name: 'Author',
+    handle: 'authorId',
+    instructions: 'Entries will be assigned to the user in this field. If the field does not match any existing member, the default author will be assigned.' | t('needletail'),
+    default: {
+        type: 'elementselect',
+        options: {
+            elementType: 'craft\\elements\\User',
+            selectionLabel: "Default Author" | t('needletail'),
+            limit: 1,
+        },
+    },
+}]) %}
+
+<h2>{{ 'Entry Fields' | t('needletail') }}</h2>
+
+
+<table class="needletail-mapping data fullwidth collapsible">
+    <thead>
+    <th style="width: 45%">{{ 'Field' | t('needletail') }}</th>
+    <th>{{ 'Enabled' | t('needletail') }}</th>
+    <th style="width: 45%">{{ 'Default Value' | t('needletail') }}</th>
+    </thead>
+    <tbody>
+    {% for field in fields %}
+        {% set template = field.type ?? 'default' %}
+        {% set variables = field | merge({ bucket: bucket, attribute: true }) %}
+        {% include 'needletail/_includes/fields/default' with variables only %}
+    {% endfor %}
+    </tbody>
+</table>
+
+{% set tabs = [] %}
+
+{% if entryType.fieldLayoutId %}
+    {% set tabs = craft.app.fields.getLayoutById(entryType.fieldLayoutId).getTabs() %}
+
+    {% for tab in tabs %}
+        <hr>
+
+        <h2>{{ tab.name }} Fields</h2>
+
+        <table class="needletail-mapping data fullwidth collapsible">
+            <thead>
+            <th style="width: 45%">{{ 'Field' | t('needletail') }}</th>
+            <th>{{ 'Enabled' | t('needletail') }}</th>
+            <th style="width: 45%">{{ 'Default Value' | t('needletail') }}</th>
+            </thead>
+            <tbody>
+            {% for field in tab.getFields() %}
+{#                <tr>#}
+{#                    <th>{{  className(field) }}</th>#}
+{#                    <td></td>#}
+{#                    <td></td>#}
+{#                </tr>#}
+                {% set fieldClass = craft.needletail.fields.getRegisteredField(className(field)) %}
+                {% set template = fieldClass.getMappingTemplate() %}
+
+                {% set variables = { name: field.name, handle: field.handle, bucket: bucket, field: field, fieldClass: fieldClass } %}
+
+                {% include template ignore missing with variables only %}
+{#                {% include 'needletail/_includes/fields/default' with variables only %}#}
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+{% endif %}

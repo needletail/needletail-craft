@@ -1,0 +1,26 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Needletail plugin for Craft CMS
+ *
+ * NeedletailWidget Widget Settings
+ *
+ * @author    Needletail
+ * @copyright Copyright (c) 2019 Needletail
+ * @link      https://needletail.io
+ * @package   Needletail
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("needletail\\needletail\\assetbundles\\needletail\\NeedletailAsset") %}
+
+{{ forms.textField({
+    label: 'Message',
+    instructions: 'Enter a message here.',
+    id: 'message',
+    name: 'message',
+    value: widget['message']})
+}}

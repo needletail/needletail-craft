@@ -1,0 +1,11 @@
+{% extends parentLayout | default('_layouts/cp') %}
+
+{% do view.registerAssetBundle("needletail\\needletail\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+{% if title is not defined %}
+    {% set title = craft.needletail.getPluginName ~ ' ' %}
+{% endif %}
+
+{% if hideTabs is not defined %}
+    {% set tabs = craft.needletail.getCpTabs %}
+{% endif %}

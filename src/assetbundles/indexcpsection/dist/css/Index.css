@@ -1,0 +1,125 @@
+/**
+ * Needletail plugin for Craft CMS
+ *
+ * Index Field CSS
+ *
+ * @author    Needletail
+ * @copyright Copyright (c) 2019 Needletail
+ * @link      https://needletail.io
+ * @package   Needletail
+ * @since     1.0.0
+ */
+
+
+.needletail-mapping .element-sub-field {
+    display: none;
+}
+
+.needletail-mapping .element-sub-field td {
+    background: #fafafa;
+}
+
+.needletail-mapping .element-sub-field .col-field {
+    padding-left: 30px;
+}
+
+.needletail-mapping .element-sub-field .col-default {
+    padding-right: 30px;
+}
+
+.needletail-mapping .element-sub-field td.col-field .field > .heading {
+    font-size: 11px;
+    margin-bottom: 0;
+}
+
+.needletail-mapping .element-sub-field td.col-field .field > .heading > .instructions {
+    margin-top: -2px;
+}
+
+.needletail-mapping .element-sub-field .fa-level-up {
+    float: left;
+    display: block;
+    height: 100%;
+    color: #cacaca;
+    margin-left: -18px;
+    margin-top: 3px;
+    transform: rotate(90deg);
+}
+
+.subelement-toggle .field {
+    display: flex;
+    flex-direction: row-reverse;
+    text-align: left;
+    justify-content: flex-end;
+    padding-top: 8px;
+}
+
+.subelement-toggle .field .lightswitch.small {
+    width: 25px;
+    height: 16px;
+    margin-bottom: -4px;
+}
+
+.subelement-toggle .field .lightswitch.small .label {
+    height: 16px;
+}
+
+.subelement-toggle .field .lightswitch.small .handle {
+    margin: 1px -8px;
+    width: 14px;
+    height: 14px;
+}
+
+.subelement-toggle .field > .heading > label {
+    font-weight: 400;
+    cursor: pointer;
+    margin-left: 8px;
+    color: #8f98a3;
+}
+
+
+.needletail-mapping .complex-field td {
+    background: #fafafa;
+}
+
+.needletail-mapping .complex-field .col-field {
+    padding-left: 13px;
+}
+
+.needletail-mapping .complex-field .col-field .field > .heading {
+    font-size: 11px;
+}
+
+.needletail-mapping .complex-field .col-field .field > .heading > .instructions {
+    margin-top: 0;
+    line-height: 12px;
+}
+
+.needletail-mapping .complex-field td.col-map .field {
+    margin-bottom: 0;
+}
+
+.needletail-mapping .complex-field .col-default {
+    padding-right: 13px;
+}
+
+.needletail-mapping .complex-field-header td {
+    background-color: #f4f4f4;
+}
+
+.needletail-mapping .complex-field-header + .complex-field-header {
+    display: none;
+}
+
+.needletail-mapping .complex-field-header .col-field {
+    padding-left: 13px;
+}
+
+.needletail-mapping .complex-field-header .col-field .field > .heading {
+    font-size: 14px;
+}
+
+.needletail-mapping .complex-field-header .field-extra-settings .checkboxfield {
+    display: inline-block;
+    margin-right: 10px;
+}

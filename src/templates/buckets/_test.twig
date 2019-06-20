@@ -1,0 +1,22 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{% import '_includes/forms' as forms %}
+
+{% extends 'needletail/_layouts' %}
+
+{% set crumbs = [
+    { label: craft.needletail.getPluginName | t('needletail'), url: url('needletail') },
+    { label: "Buckets" | t('needletail'), url: url('needletail/buckets') },
+    { label: "Settings" | t('needletail'), url: url('needletail/buckets/'~bucket.id) },
+    { label: "Map" | t('needletail'), url: url('needletail/buckets/'~bucket.id~'/map') }
+] %}
+
+{% set title = bucket.name  %}
+
+
+{% block content %}
+    {{ actionInput('needletail/buckets/save') }}
+    {{ redirectInput('needletail/buckets/{id}/map') }}
+    {% if bucket.id %}<input type="hidden" name="bucketId" value="{{ bucket.id }}">{% endif %}
+
+    <pre>{{ dump(bucket.fieldMapping) }}</pre>
+{% endblock %}

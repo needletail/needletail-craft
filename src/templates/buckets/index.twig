@@ -1,0 +1,56 @@
+{% extends "needletail/_layouts" %}
+
+{% set crumbs = [
+    { label: craft.needletail.getPluginName | t('needletail'), url: url('needletail') },
+    { label: "Buckets" | t('needletail'), url: url('needletail/buckets') },
+] %}
+
+{% block actionButton %}
+    <a class="btn submit add icon" href="{{ url('needletail/buckets/new') }}">{{ 'New bucket' | t('needletail') }}</a>
+{% endblock %}
+
+{% set selectedTab = 'buckets' %}
+
+{% block content %}
+
+    <div id="nobuckets"{% if buckets %} class="hidden"{% endif %}>
+        <p>{{ "No buckets exist yet." | t('buckets') }}</p>
+    </div>
+
+    <table id="buckets" class="data fullwidth collapsible">
+        <thead>
+            <th scope="col">{{ "Name" | t('needletail') }}</th>
+            <th scope="col">{{ "Handle" | t('needletail') }}</th>
+            <th scope="col">{{ "Element type" | t('needletail') }}</th>
+            <th scope="col">{{ "Element group" | t('needletail') }}</th>
+            <th class="thin"></th>
+        </thead>
+        <tbody>
+        {% for bucket in buckets %}
+            <tr data-name="{{ bucket.name }}" data-id="{{ bucket.id }}">
+                <th scope="row" data-title="Name">
+                    <a href="{{ url('needletail/buckets/' ~ bucket.id) }}">
+                        {{ bucket.name }}
+                    </a>
+                </th>
+                <td class="code">{{ bucket.handle }}</td>
+                <td></td>
+                <td></td>
+                <td class="thin action">
+                    <a class="delete icon" title="{{ 'Delete' | t('buckets') }}" role="button"></a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% js %}
+    var adminTable = new Craft.AdminTable({
+        tableSelector: '#buckets',
+        noObjectsSelector: '#nobuckets',
+        newObjectBtnSelector: '#newbucketcontainer',
+        deleteAction: 'needletail/buckets/delete',
+        confirmDeleteMessage: '{{ "Are you sure you want to delete “{name}”?" | t('needletail') }}'
+    });
+{% endjs %}

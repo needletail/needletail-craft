@@ -1,0 +1,89 @@
+{# ------------------------ #}
+{# Available Variables #}
+{# ------------------------ #}
+{# Attributes: #}
+{# type, name, handle, instructions, attribute, default, feed, feedData #}
+{# ------------------------ #}
+{# Fields: #}
+{# name, handle, instructions, feed, feedData, field, fieldClass #}
+{# ------------------------ #}
+
+{% import '_includes/forms' as forms %}
+
+{% set path = path ?? [handle] %}
+{% set namespacePath = path | join('][') %}
+{% set nodePath = path | join('.') ~ '.node' %}
+{% set defaultPath = path | join('.') ~ '.default' %}
+{% set optionsPath = path | join('.') ~ '.options' %}
+{% set enabledPath = path | join('.') ~ '.enabled' %}
+
+{% set namespace = 'fieldMapping[' ~ namespacePath ~ ']' %}
+{% set value = hash_get(bucket.fieldMapping, nodePath) %}
+{% set defaultValue = hash_get(bucket.fieldMapping, defaultPath) %}
+{% set enabled = hash_get(bucket.fieldMapping, enabledPath) %}
+
+{% set classes = classes ?? [] %}
+{% set elementFields = elementFields ?? null %}
+{% set isSubElementField = isSubElementField ?? null %}
+
+{% if isSubElementField %}
+    {% set classes = classes | merge([ 'element-sub-field' ]) %}
+{% endif %}
+
+{# Special case when inside another complex field (Matrix) #}
+{% if parentPath is defined %}
+    {% set prefixPath = parentPath %}
+{% else %}
+    {% set prefixPath = [handle] %}
+{% endif %}
+
+{% set namespace = 'fieldMapping[' ~ prefixPath | join('][') ~ ']' %}
+{% set classes = ['complex-field'] %}
+
+<tr class="">
+    <td class="col-field">
+        <div class="field">
+            <div class="heading">
+                <label class="">{{ name }}</label>
+            </div>
+
+            {% namespace namespace %}
+                {% block fieldSettings %}
+
+                    {% if field and fieldClass %}
+                        <input type="text" name="field" value="{{ className(field) }}">
+                    {% endif %}
+                {% endblock %}
+            {% endnamespace %}
+        </div>
+    </td>
+    <td class="col-enable">
+        {% namespace namespace %}
+            {{ forms.lightSwitch({
+                name: 'enabled',
+                on: enabled
+            }) }}
+        {% endnamespace %}
+    </td>
+    <td></td>
+</tr>
+
+{% for index, col in field.settings.columns %}
+    {% set nameLabel = col.heading %}
+    {% set instructionsHandle = handle ~ '[' ~ col.handle ~ ']' %}
+
+    {% set path = prefixPath | merge ([ 'fields', index ]) %}
+    {% set classes = ['element-sub-field'] %}
+    {% embed 'needletail/_includes/fields/_base' %}
+        {% block additionalFieldSettings %}
+            {% namespace 'fieldMapping[' ~ path | join('][') ~ ']' %}
+                <input type="text" name="handle" value="{{ col.handle }}">
+                <input type="text" name="type" value="{{ col.type }}">
+            {% endnamespace %}
+        {% endblock %}
+
+        {% block fieldSettings %}
+
+        {% endblock %}
+    {% endembed %}
+{% endfor %}

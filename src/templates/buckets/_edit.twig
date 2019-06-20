@@ -1,0 +1,109 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{% import '_includes/forms' as forms %}
+
+{% extends 'needletail/_layouts' %}
+
+{% set hideTabs = true %}
+{% set fullPageForm = true %}
+
+{% set crumbs = [
+    { label: craft.needletail.getPluginName | t('needletail'), url: url('needletail') },
+    { label: "Buckets" | t('needletail'), url: url('needletail/buckets') },
+] %}
+
+{% if bucket.id %}
+    {% set title = bucket.name  %}
+{% else %}
+    {% set title = "Create a new bucket" | t('needletail') %}
+{% endif %}
+
+{% block actionButton %}
+    <div class="buttons">
+        <input type="button" data-redirect="{{ craft.app.security.hashData('needletail/buckets/{id}') }}" class="btn submit" value="{{ 'Save' | t('needletail') }}">
+        <input type="button" data-redirect="{{ craft.app.security.hashData('needletail/buckets/{id}/map') }}" class="btn submit" value="{{ 'Save & Continue' | t('needletail') }}">
+    </div>
+{% endblock %}
+
+{% block content %}
+    {{ actionInput('needletail/buckets/save') }}
+    {{ redirectInput('needletail/buckets/{id}/map') }}
+
+    {% if bucket.id %}<input type="hidden" name="bucketId" value="{{ bucket.id }}">{% endif %}
+
+    {{ forms.textField({
+        first: true,
+        label: "Name" | t('needletail'),
+        instructions: "What this bucket will be called in the CP." | t('needletail'),
+        id: 'name',
+        name: 'name',
+        value: bucket.name,
+        errors: bucket.getErrors('name'),
+        autofocus: true,
+        required: true,
+    }) }}
+
+    {{ forms.textField({
+        label: "Handle"|t('needletail'),
+        instructions: "How you’ll refer to this bucket in the templates and the Needletail CP."|t('needletail'),
+        id: 'handle',
+        class: 'code',
+        name: 'handle',
+        value: bucket.handle,
+        errors: bucket.getErrors('handle'),
+        required: true
+    }) }}
+
+    <hr>
+
+    {% set elementsList = [] %}
+    {% for elementClass, element in elements %}
+        {% set elementsList = elementsList | merge({ (elementClass): element.name }) %}
+    {% endfor %}
+
+    {{ forms.selectField({
+        label: "Element Type" | t('needletail'),
+        instructions: 'Choose what element you want to save your bucket data to.' | t('needletail'),
+        id: 'elementType',
+        name: 'elementType',
+        options: [{ label: 'Select', value: '' }] | merge(elementsList),
+        value: bucket.elementType,
+        errors: bucket.getErrors('elementType'),
+        required: true,
+    }) }}
+
+    {% for elementClass, element in elements %}
+        <div class="element-select" data-type="{{ elementClass | replace('\\', '-') }}">
+            {% set elementType = elementClass %}
+
+            {% include element.groupsTemplate ignore missing %}
+        </div>
+    {% endfor %}
+
+    {% if craft.app.isMultiSite() %}
+        {% set sites = [] %}
+
+        {% for site in craft.app.sites.getAllSites() %}
+            {% set sites = sites | merge([{ label: site.name, value: site.id }]) %}
+        {% endfor %}
+
+        {{ forms.selectField({
+            label: "Site" | t('needletail'),
+            instructions: 'Choose which site you want to index.' | t('needletail'),
+            id: 'siteId',
+            name: 'siteId',
+            options: sites,
+            value: bucket.siteId,
+        }) }}
+    {% else %}
+        {{ forms.hidden({
+            name: 'siteId',
+            value: craft.app.sites.getPrimarySite().id,
+        }) }}
+    {% endif %}
+
+
+{% endblock %}
+
+{% js %}
+    {% if not bucket.handle %}new Craft.HandleGenerator('#name', '#handle');{% endif %}
+{% endjs %}

@@ -1,0 +1,49 @@
+{% redirect 'needletail/buckets' %}
+
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Needletail plugin for Craft CMS 3.x
+ *
+ * Needletail index.twig
+ *
+ * @author    Needletail
+ * @copyright Copyright (c) 2019 Needletail
+ * @link      https://needletail.io
+ * @package   Needletail
+ * @since     1.0.0
+ */
+#}
+
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("needletail\\needletail\\assetbundles\\needletail\\NeedletailAsset") %}
+{% do view.registerAssetBundle("needletail\\needletail\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+{# Link for the ? icon at the bottom of the page #}
+{% set docsUrl = "???" %}
+
+{# The title of this CP section #}
+{% set title = "Needletail" %}
+
+{# The URL to this plugin's base CP section #}
+{% set pluginCpUrl = url('needletail') %}
+
+{# Get a URL to an image in our AssetBundle #}
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@needletail/needletail/assetbundles/indexcpsection/dist', true) ~ '/img/Index-icon.svg' %}
+
+{# Content that should appear in the page header#}
+{% set extraPageHeaderHtml %}
+    <div class="buttons">
+        <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('needletail') }}</a>
+    </div>
+{% endset %}
+
+{# The content of the CP Section#}
+{% set content %}
+    <h2>{{ "Index CP Section body goes here"|t('needletail') }}</h2>
+    <img src="{{ iconUrl }}" height="64" width="64" />
+    <p class="textline"></p>
+{% endset %}

@@ -1,0 +1,32 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{% import '_includes/forms' as forms %}
+
+{% extends 'needletail/_layouts' %}
+
+{% set hideTabs = true %}
+{% set fullPageForm = true %}
+
+{% set crumbs = [
+    { label: craft.needletail.getPluginName | t('needletail'), url: url('needletail') },
+    { label: "Buckets" | t('needletail'), url: url('needletail/buckets') },
+    { label: "Settings" | t('needletail'), url: url('needletail/buckets/'~bucket.id) },
+] %}
+
+{% set title = bucket.name  %}
+
+{% block actionButton %}
+    <div class="buttons">
+        <input type="button" data-redirect="{{ craft.app.security.hashData('needletail/buckets/{id}/map') }}" class="btn submit" value="{{ 'Save' | t('needletail') }}">
+        <input type="button" data-redirect="{{ craft.app.security.hashData('needletail/buckets/{id}/test') }}" class="btn submit" value="{{ 'Save & Continue' | t('needletail') }}">
+    </div>
+{% endblock %}
+
+
+{% block content %}
+    {{ actionInput('needletail/buckets/save') }}
+    {{ redirectInput('needletail/buckets/{id}/map') }}
+
+    {% if bucket.id %}<input type="hidden" name="bucketId" value="{{ bucket.id }}">{% endif %}
+
+    {% include bucket.element.getMappingTemplate() %}
+{% endblock %}

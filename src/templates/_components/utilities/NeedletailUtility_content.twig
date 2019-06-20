@@ -1,0 +1,24 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Needletail plugin for Craft CMS
+ *
+ * NeedletailUtility Utility Content
+ *
+ * @author    Needletail
+ * @copyright Copyright (c) 2019 Needletail
+ * @link      https://needletail.io
+ * @package   Needletail
+ * @since     1.0.0
+ */
+#}
+
+<h1>NeedletailUtility</h1>
+
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@needletail/needletail/assetbundles/needletailutilityutility/dist', true) ~ '/img/NeedletailUtility-icon.svg' %}
+
+<img src="{{ iconUrl }}" height="64" width="64" />
+
+<p>Your Utility content goes here</p>
+
+<p>{{ someVar }}</p>

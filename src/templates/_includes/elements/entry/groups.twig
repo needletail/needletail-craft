@@ -1,0 +1,57 @@
+{% import '_includes/forms' as forms %}
+
+{% set sections = element.groups %}
+
+{% set sectionEntryTypes = [] %}
+
+{# Create a section-indexed array of element types #}
+{% set entryTypes = [] %}
+{% for section in sections %}
+    {% set options = craft.needletail.getSelectOptions(section.getEntryTypes()) %}
+
+    {# We have to prefix the index, otherwise Twig doesn't maintain numbered index correctly #}
+    {% set entryTypes = entryTypes | merge({ ('item_' ~ section.id): options }) %}
+{% endfor %}
+
+{% set sectionId = null %}
+{% set entryTypeId = null %}
+
+{# Load saved values for bucket #}
+{% if bucket.elementData[elementType] is defined %}
+    {% set sectionId = bucket.elementData[elementType].section ?? null %}
+    {% set entryTypeId = bucket.elementData[elementType].entryType ?? null %}
+{% endif %}
+
+{% if sectionId %}
+    {% set section = craft.app.sections.getSectionById(sectionId) %}
+
+    {% if section %}
+        {% set sectionEntryTypes = section.getEntryTypes() %}
+    {% endif %}
+{% elseif sections[0] is defined %}
+    {% set sectionEntryTypes = sections[0].getEntryTypes() ?? null %}
+{% endif %}
+
+<div class="element-sub-group" data-items="{{ entryTypes | json_encode }}">
+    {{ forms.selectField({
+        label: "Section" | t('needletail'),
+        instructions: 'Choose the Section you want to index.' | t('needletail'),
+        class: 'element-parent-group',
+        id: 'elementData-' ~ elementType ~ '-section',
+        name: 'elementData[' ~ elementType ~ '][section]',
+        options: craft.needletail.getSelectOptions(sections),
+        value: sectionId ?? '',
+        required: true,
+    }) }}
+
+    {{ forms.selectField({
+        label: "Entry Type" | t('needletail'),
+        instructions: 'Choose the entry type you want to index' | t('needletail'),
+        class: 'element-child-group',
+        id: 'elementData-' ~ elementType ~ '-entryType',
+        name: 'elementData[' ~ elementType ~ '][entryType]',
+        options: craft.needletail.getSelectOptions(sectionEntryTypes),
+        value: entryTypeId ?? '',
+        required: true,
+    }) }}
+</div>
