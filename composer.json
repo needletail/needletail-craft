@@ -10,10 +10,6 @@
         "craft-plugin",
         "needletail"
     ],
-    "support": {
-        "docs": "???",
-        "issues": "???"
-    },
     "license": "MIT",
     "authors": [
         {
