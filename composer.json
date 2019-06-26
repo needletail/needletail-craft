@@ -2,7 +2,7 @@
     "name": "needletail/needletail-craft3",
     "description": "Needletail Search and Index package for Craft 3.x",
     "type": "craft-plugin",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "keywords": [
         "craft",
         "cms",
