@@ -33,6 +33,20 @@ class Process extends Component
         Needletail::$plugin->connection->bulk($bucket->handle, $results);
     }
 
+    public function processSingle(BucketModel $bucket, ElementInterface $element)
+    {
+        $mappingData = $this->prepareMappingData($bucket->fieldMapping);
+
+        $result = $this->parseElement($element, $bucket, $mappingData);
+
+        Needletail::$plugin->connection->update($bucket->handle, $result);
+    }
+
+    public function deleteSingle(BucketModel $bucket, ElementInterface $element)
+    {
+        Needletail::$plugin->connection->delete($bucket->handle, $element->getId());
+    }
+
     public function afterProcess()
     {
 
@@ -45,13 +59,13 @@ class Process extends Component
             'fields' => []
         ];
 
-        foreach ( $data as $handle => $settings ) {
-            if ( ! Hash::get($settings, 'enabled') ) {
+        foreach ($data as $handle => $settings) {
+            if (!Hash::get($settings, 'enabled')) {
                 continue;
             }
             unset($settings['enabled']);
             $target = array_key_exists('field', $settings) ? 'fields' : 'attributes';
-            if ( array_key_exists('fields', $settings) ) {
+            if (array_key_exists('fields', $settings)) {
                 $settings['children'] = $this->prepareMappingData($settings['fields']);
                 unset($settings['fields']);
             }
@@ -65,16 +79,16 @@ class Process extends Component
     {
         $fieldData = [];
 
-        foreach ( Hash::get($mappingData, 'attributes', []) as $handle => $data) {
+        foreach (Hash::get($mappingData, 'attributes', []) as $handle => $data) {
             $fieldData[$handle] = $bucket->element->parseAttribute($element, $handle, $data);
         }
-        foreach ( Hash::get($mappingData, 'fields', []) as $handle => $data) {
+        foreach (Hash::get($mappingData, 'fields', []) as $handle => $data) {
             $fieldData[$handle] = Plugin::$plugin->fields->parseField($bucket, $element, $handle, $data);
         }
 
         return array_merge([
-            'id' => (int) $element->id,
-        ]) + $fieldData;
+                'id' => (int)$element->id,
+            ]) + $fieldData;
 
     }
 }

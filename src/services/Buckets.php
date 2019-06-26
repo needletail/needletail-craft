@@ -4,6 +4,7 @@ namespace needletail\needletail\services;
 
 use Craft;
 use craft\base\Component;
+use craft\db\Query;
 use craft\helpers\Json;
 use needletail\needletail\events\BucketEvent;
 use needletail\needletail\models\BucketModel;
@@ -12,6 +13,7 @@ use needletail\needletail\records\BucketRecord;
 use verbb\feedme\events\FeedEvent;
 use verbb\feedme\records\FeedRecord;
 use yii\base\Exception;
+use yii\caching\DbQueryDependency;
 
 class Buckets extends Component
 {
@@ -42,14 +44,13 @@ class Buckets extends Component
         return Needletail::$plugin->name;
     }
 
-
-    public function getBuckets($orderBy = null)
+    /**
+     * @param array $criteria
+     * @return BucketModel[]
+     */
+    public function getBuckets($criteria = [])
     {
-        $query = $this->_getQuery();
-
-        if ($orderBy) {
-            $query->orderBy($orderBy);
-        }
+        $query = $this->_getQuery()->where($criteria);
 
         $results = $query->all();
 
@@ -60,6 +61,27 @@ class Buckets extends Component
         return $results;
     }
 
+    /**
+     * @return BucketModel[]
+     */
+    public function getCached()
+    {
+        $dep = new DbQueryDependency([
+            'query'=> (new Query())
+                ->from(BucketRecord::tableName())
+                ->orderBy(['dateUpdated' => SORT_DESC ])
+                ->limit(1)
+                ->select('dateUpdated')
+        ]);
+
+        return Craft::$app->getCache()->getOrSet('needletail.buckets', function() {
+            return Needletail::$plugin->buckets->getBuckets();
+        }, null, $dep);
+    }
+
+    /**
+     * @return BucketModel|null
+     */
     public function getById($bucketId)
     {
         $result = $this->_getQuery()
@@ -69,42 +91,12 @@ class Buckets extends Component
         return $this->_createModelFromRecord($result);
     }
 
-    // Private Methods
-    // =========================================================================
-
-    private function _getQuery()
-    {
-        return BucketRecord::find()
-            ->select([
-                'id',
-                'name',
-                'handle',
-                'elementType',
-                'elementData',
-                'fieldMapping',
-                'siteId',
-                'dateCreated',
-                'dateUpdated',
-                'uid',
-            ]);
-    }
-
-
-    private function _createModelFromRecord(BucketRecord $record = null)
-    {
-        if (!$record) {
-            return null;
-        }
-
-        $record['elementData'] = Json::decode($record['elementData']);
-        $record['fieldMapping'] = Json::decode($record['fieldMapping']);
-
-        $attributes = $record->toArray();
-
-        return new BucketModel($attributes);
-    }
-
-    public function save(BucketModel $model, bool $runValidation = true): bool
+    /**
+     * @param BucketModel $model
+     * @param bool $runValidation
+     * @return bool
+     */
+    public function save(BucketModel $model, $runValidation = true)
     {
         $isNewModel = !$model->id;
 
@@ -153,6 +145,11 @@ class Buckets extends Component
         return true;
     }
 
+    /**
+     * @param $bucketId
+     * @return bool
+     * @throws \yii\db\Exception
+     */
     public function deleteById($bucketId)
     {
         $model = $this->getById($bucketId);
@@ -177,5 +174,40 @@ class Buckets extends Component
         }
 
         return true;
+    }
+
+    // Private Methods
+    // =========================================================================
+
+    private function _getQuery()
+    {
+        return BucketRecord::find()
+            ->select([
+                'id',
+                'name',
+                'handle',
+                'elementType',
+                'elementData',
+                'fieldMapping',
+                'siteId',
+                'dateCreated',
+                'dateUpdated',
+                'uid',
+            ]);
+    }
+
+
+    private function _createModelFromRecord(BucketRecord $record = null)
+    {
+        if (!$record) {
+            return null;
+        }
+
+        $record['elementData'] = Json::decode($record['elementData']);
+        $record['fieldMapping'] = Json::decode($record['fieldMapping']);
+
+        $attributes = $record->toArray();
+
+        return new BucketModel($attributes);
     }
 }

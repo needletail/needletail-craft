@@ -40,4 +40,18 @@ class Connection extends Component
         $bucket = $this->getClient()->initBucket($bucket);
         return $bucket->bulk($array);
     }
+
+    public function update($bucket, $data)
+    {
+        $id = $data['id'];
+        unset($data['id']);
+        $bucket = $this->getClient()->initBucket($bucket);
+        return $bucket->updateDocument($id, $data);
+    }
+
+    public function delete($bucket, $id)
+    {
+        $bucket = $this->getClient()->initBucket($bucket);
+        return $bucket->deleteDocument($id);
+    }
 }

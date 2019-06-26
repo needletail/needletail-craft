@@ -23,14 +23,6 @@ $(document).on('change', '#elementType', function() {
 
     var value = $(this).val().replace(/\\/g, '-');
     $('.element-select[data-type="' + value + '"]').show();
-
-    if (value === 'craft-elements-User') {
-        $disableLabel.text(Craft.t('feed-me', 'Suspend missing users'));
-        $disableInstructions.text(Craft.t('feed-me', 'Suspends any users that are missing from the feed.'));
-    } else {
-        $disableLabel.text(originalDisableLabel);
-        $disableInstructions.text(originalDisableInstructions);
-    }
 });
 
 $('#elementType').trigger('change');
@@ -43,7 +35,7 @@ $(document).on('change', '.element-parent-group select', function() {
 
     var currentValue = $('.element-child-group select').val();
 
-    var newOptions = '<option value="">' + Craft.t('feed-me', 'None') + '</option>';
+    var newOptions = '<option value="">' + Craft.t('needletail', 'None') + '</option>';
     $.each(entryTypes, function(index, value) {
         if (index) {
             newOptions += '<option value="' + index + '">' + value + '</option>';

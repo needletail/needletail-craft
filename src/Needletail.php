@@ -10,11 +10,13 @@
 
 namespace needletail\needletail;
 
+use craft\events\ElementEvent;
 use needletail\needletail\models\NeedletailModel;
 use needletail\needletail\services\Buckets;
 use needletail\needletail\services\Connection;
 use needletail\needletail\services\DataTypes;
 use needletail\needletail\services\Elements;
+use needletail\needletail\services\Events;
 use needletail\needletail\services\Fields;
 use needletail\needletail\services\Logs;
 use needletail\needletail\services\Process;
@@ -55,6 +57,7 @@ use yii\base\Event;
  * @property  Buckets $buckets
  * @property  Connection $connection
  * @property  Elements $elements
+ * @property  Events $events
  * @property  Fields $fields
  * @property  Logs $logs
  * @property  Process $process
@@ -111,15 +114,6 @@ class Needletail extends Plugin
             $this->controllerNamespace = 'needletail\needletail\console\controllers';
         }
 
-        // Register our site routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['siteActionTrigger1'] = 'needletail/default';
-            }
-        );
-
         // Register our CP routes
         Event::on(
             UrlManager::class,
@@ -130,7 +124,6 @@ class Needletail extends Plugin
                 $event->rules['needletail/buckets/<bucketId:\d+>'] = 'needletail/buckets/edit';
                 $event->rules['needletail/buckets/<bucketId:\d+>/map'] = 'needletail/buckets/map';
                 $event->rules['needletail/buckets/<bucketId:\d+>/test'] = 'needletail/buckets/test';
-                $event->rules['cpActionTrigger1'] = 'needletail/default/do-something';
             }
         );
 
@@ -174,6 +167,34 @@ class Needletail extends Plugin
             }
         );
 
+
+        $this->setComponents([
+            'buckets'    => Buckets::class,
+            'connection' => Connection::class,
+            'elements'   => Elements::class,
+            'events'     => Events::class,
+            'fields'     => Fields::class,
+            'logs'       => Logs::class,
+            'process'    => Process::class,
+        ]);
+
+
+        Event::on(\craft\services\Elements::class, \craft\services\Elements::EVENT_BEFORE_DELETE_ELEMENT, function (ElementEvent $event) {
+            Needletail::$plugin->events->onDelete($event);
+        });
+
+        Event::on(\craft\services\Elements::class, \craft\services\Elements::EVENT_AFTER_RESTORE_ELEMENT, function (ElementEvent $event) {
+            Needletail::$plugin->events->onRestore($event);
+        });
+
+        Event::on(\craft\services\Elements::class, \craft\services\Elements::EVENT_AFTER_SAVE_ELEMENT, function (ElementEvent $event) {
+            Needletail::$plugin->events->onSave($event);
+        });
+
+        Event::on(\craft\services\Elements::class, \craft\services\Elements::EVENT_AFTER_UPDATE_SLUG_AND_URI, function (ElementEvent $event) {
+            Needletail::$plugin->events->onUpdateSlugAndUri($event);
+        });
+
 /**
  * Logging in Craft involves using one of the following methods:
  *
@@ -200,15 +221,6 @@ class Needletail extends Plugin
             ),
             __METHOD__
         );
-
-        $this->setComponents([
-            'buckets'    => Buckets::class,
-            'connection' => Connection::class,
-            'elements'   => Elements::class,
-            'fields'     => Fields::class,
-            'logs'       => Logs::class,
-            'process'    => Process::class,
-        ]);
     }
 
     // Protected Methods

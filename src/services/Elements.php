@@ -70,7 +70,6 @@ class Elements extends Component
             Entry::class
         ];
 
-
         $event = new RegisterNeedletailElementsEvent([
             'elements' => $elements,
         ]);
