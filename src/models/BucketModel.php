@@ -10,6 +10,7 @@ use needletail\needletail\Needletail;
  * Class BucketModel
  * @package needletail\needletail\models
  * @property ElementInterface $element
+ * @property string $handleWithPrefix
  */
 class BucketModel extends Model
 {
@@ -58,5 +59,10 @@ class BucketModel extends Model
         }
 
         return $element;
+    }
+
+    public function getHandleWithPrefix()
+    {
+        return sprintf('%s%s', Needletail::$plugin->settings->getBucketPrefix(), $this->handle);
     }
 }

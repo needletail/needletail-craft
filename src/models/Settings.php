@@ -48,6 +48,20 @@ class Settings extends Model
      */
     public $apiWriteKey = '';
 
+    /**
+     * Prefix bucket names
+     *
+     * @var string
+     */
+    public $bucketPrefix = '';
+
+    /**
+     * Prefix bucket names
+     *
+     * @var string
+     */
+    public $disableIndexingOnNonProduction = false;
+
     // Public Methods
     // =========================================================================
 
@@ -64,12 +78,13 @@ class Settings extends Model
     public function rules()
     {
         return [
-            [['apiReadKey', 'apiWriteKey'], 'string'],
+            [['apiReadKey', 'apiWriteKey', 'bucketPrefix'], 'string'],
+            [['disableIndexingOnNonProduction'], 'boolean'],
         ];
     }
 
     /**
-     * API Keys can be set in environment variable. Therefor
+     * API Keys can be set in environment variable. Therefore
      * we need to parse the keys on retrieval.
      *
      * @return bool|string|null
@@ -80,7 +95,7 @@ class Settings extends Model
     }
 
     /**
-     * API Keys can be set in environment variable. Therefor
+     * API Keys can be set in environment variable. Therefore
      * we need to parse the keys on retrieval.
      *
      * @return bool|string|null
@@ -88,5 +103,16 @@ class Settings extends Model
     public function getApiWriteKey()
     {
         return Craft::parseEnv($this->apiWriteKey);
+    }
+
+    /**
+     * Bucket Prefix can be set in environment variable. Therefore
+     * we need to parse the keys on retrieval.
+     *
+     * @return bool|string|null
+     */
+    public function getBucketPrefix()
+    {
+        return trim(Craft::parseEnv($this->bucketPrefix));
     }
 }

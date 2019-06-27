@@ -35,29 +35,6 @@ class NeedletailVariable extends ServiceLocator
     // =========================================================================
 
     /**
-     * Whatever you want to output to a Twig template can go into a Variable method.
-     * You can have as many variable functions as you want.  From any Twig template,
-     * call it like this:
-     *
-     *     {{ craft.needletail.exampleVariable }}
-     *
-     * Or, if your variable requires parameters from Twig:
-     *
-     *     {{ craft.needletail.exampleVariable(twigValue) }}
-     *
-     * @param null $optional
-     * @return string
-     */
-    public function exampleVariable($optional = null)
-    {
-        $result = "And away we go to the Twig template...";
-        if ($optional) {
-            $result = "I'm feeling optional today...";
-        }
-        return $result;
-    }
-
-    /**
      * Get the plugin name
      *
      * @return string
@@ -65,6 +42,21 @@ class NeedletailVariable extends ServiceLocator
     public function getPluginName()
     {
         return Needletail::$plugin->buckets->getName();
+    }
+
+    public function getBucketPrefix()
+    {
+        return Needletail::$plugin->settings->getBucketPrefix();
+    }
+
+    public function bucket($handle, $includingPrefix = false)
+    {
+        return Needletail::$plugin->buckets->getByHandle($handle, $includingPrefix);
+    }
+
+    public function publicKey()
+    {
+        return Needletail::$plugin->settings->getApiReadKey();
     }
 
     public function getCpTabs()

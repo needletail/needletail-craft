@@ -91,6 +91,18 @@ class Buckets extends Component
         return $this->_createModelFromRecord($result);
     }
 
+    public function getByHandle($handle, $includingPrefix = false)
+    {
+        if ( $includingPrefix )
+            $handle = str_replace(Needletail::$plugin->settings->getBucketPrefix(), '', $handle);
+
+        $result = $this->_getQuery()
+            ->where(['handle' => $handle])
+            ->one();
+
+        return $this->_createModelFromRecord($result);
+    }
+
     /**
      * @param BucketModel $model
      * @param bool $runValidation

@@ -15,7 +15,10 @@ class Connection extends Component
      */
     public function getClient()
     {
-        return new \Needletail\Client(Needletail::$plugin->getSettings()->getApiReadKey() . "As", Needletail::$plugin->getSettings()->getApiWriteKey());
+        return new \Needletail\Client(
+            Needletail::$plugin->getSettings()->getApiReadKey(),
+            Needletail::$plugin->getSettings()->getApiWriteKey()
+        );
     }
 
     public function initBucket($name)

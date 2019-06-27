@@ -78,6 +78,9 @@ class Events extends Component
 
     private function doPreFlightChecks(ElementInterface $element)
     {
+        if (Needletail::$plugin->process->shouldNotPerformWriteActions())
+            return false;
+
         $this->_buckets = Needletail::$plugin->buckets->getCached();
 
         if (!$this->pluginHandlesThisTypeOfElement(get_class($element)))
@@ -102,5 +105,6 @@ class Events extends Component
                 ->getQuery($bucketModel, ['id' => $element->id])->count() !== 0;
         });
     }
+
 
 }

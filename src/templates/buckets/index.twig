@@ -33,7 +33,9 @@
                         {{ bucket.name }}
                     </a>
                 </th>
-                <td class="code">{{ bucket.handle }}</td>
+                <td class="code">
+                    <span style="color: #bbb">{{ craft.needletail.getBucketPrefix }}</span>{{ bucket.handle }}
+                </td>
                 <td></td>
                 <td></td>
                 <td class="thin action">

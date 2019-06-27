@@ -28,6 +28,7 @@
     id: 'apiReadKey',
     name: 'apiReadKey',
     value: settings['apiReadKey'],
+    required: true,
     suggestEnvVars: true})
 }}
 
@@ -37,5 +38,23 @@
     id: 'apiWriteKey',
     name: 'apiWriteKey',
     value: settings['apiWriteKey'],
+    required: true,
     suggestEnvVars: true})
+}}
+
+{{ forms.autosuggestField({
+    label: 'Bucket name prefix',
+    instructions: '**Optional!** You can prefix bucket names when using multiple environments (testing/staging/live) using .env variables.',
+    id: 'bucketPrefix',
+    name: 'bucketPrefix',
+    value: settings['bucketPrefix'],
+    suggestEnvVars: true})
+}}
+
+
+{{ forms.lightswitchField({
+    label: 'Disable indexing on non-production environments',
+    id: 'disableIndexingOnNonProduction',
+    name: 'disableIndexingOnNonProduction',
+    on: settings['disableIndexingOnNonProduction']})
 }}

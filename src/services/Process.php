@@ -19,6 +19,9 @@ class Process extends Component
 
     public function processBatch(BucketModel $bucket, int $take, int $offset)
     {
+        if ($this->shouldNotPerformWriteActions())
+            return false;
+
         $query = $bucket->element->getQuery($bucket, []);
         $query->offset($offset);
         $query->limit($take);
@@ -30,21 +33,27 @@ class Process extends Component
             return $this->parseElement($element, $bucket, $mappingData);
         }, $results);
 
-        Needletail::$plugin->connection->bulk($bucket->handle, $results);
+        Needletail::$plugin->connection->bulk($bucket->handleWithPrefix, $results);
     }
 
     public function processSingle(BucketModel $bucket, ElementInterface $element)
     {
+        if ( $this->shouldNotPerformWriteActions() )
+            return false;
+
         $mappingData = $this->prepareMappingData($bucket->fieldMapping);
 
         $result = $this->parseElement($element, $bucket, $mappingData);
 
-        Needletail::$plugin->connection->update($bucket->handle, $result);
+        Needletail::$plugin->connection->update($bucket->handleWithPrefix, $result);
     }
 
     public function deleteSingle(BucketModel $bucket, ElementInterface $element)
     {
-        Needletail::$plugin->connection->delete($bucket->handle, $element->getId());
+        if ( $this->shouldNotPerformWriteActions() )
+            return false;
+
+        Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $element->getId());
     }
 
     public function afterProcess()
@@ -90,5 +99,20 @@ class Process extends Component
                 'id' => (int)$element->id,
             ]) + $fieldData;
 
+    }
+
+    public function shouldNotPerformWriteActions()
+    {
+        return $this->isRunningInNonProduction() && $this->nonProductionIsDisabled();
+    }
+
+    public function isRunningInNonProduction()
+    {
+        return CRAFT_ENVIRONMENT !== 'production';
+    }
+
+    public function nonProductionIsDisabled()
+    {
+        return !! Needletail::$plugin->settings->disableIndexingOnNonProduction;
     }
 }
