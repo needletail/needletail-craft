@@ -3,7 +3,6 @@
 namespace needletail\needletail\fields;
 
 use Cake\Utility\Hash;
-use Illuminate\Support\Arr;
 
 class Table extends Field implements FieldInterface
 {
@@ -39,7 +38,7 @@ class Table extends Field implements FieldInterface
         }
 
         return array_map( function ($data) use ($fields) {
-            return Arr::only($data, $fields);
+            return array_intersect_key($data, array_flip((array) $fields));
         }, (array) $this->element->getFieldValue($this->fieldHandle));
     }
 }
