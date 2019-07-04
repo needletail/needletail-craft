@@ -101,10 +101,7 @@ class Events extends Component
     private function getAllBucketsForElement(\craft\base\ElementInterface $element)
     {
         return array_filter($this->_buckets, function (BucketModel $bucketModel) use ($element) {
-            return Needletail::$plugin->elements->getRegisteredElement(get_class($element))
-                ->getQuery($bucketModel, ['id' => $element->id])->count() !== 0;
+            return $bucketModel->element->getQuery($bucketModel, ['id' => $element->id])->count() !== 0;
         });
     }
-
-
 }

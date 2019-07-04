@@ -1,8 +1,12 @@
 <?php
+
 namespace needletail\needletail\fields;
 
+use Cake\Utility\Hash;
 use craft\elements\Category;
 use craft\elements\Entry;
+use needletail\needletail\Needletail as Plugin;
+use needletail\needletail\Needletail;
 
 class Entries extends Field implements FieldInterface
 {
@@ -13,6 +17,9 @@ class Entries extends Field implements FieldInterface
     public static $class = 'craft\fields\Entries';
     public static $elementType = 'craft\elements\Entry';
 
+    public $defaultSubAttributes = [
+        'title', 'slug', 'url'
+    ];
 
     // Templates
     // =========================================================================
@@ -27,13 +34,6 @@ class Entries extends Field implements FieldInterface
 
     public function parseField()
     {
-        $query = $this->element->getFieldValue($this->fieldHandle);
-
-        return array_map(function (Entry $entry) {
-            return [
-                'id' => $entry->id,
-                'title' => $entry->title
-            ];
-        }, $query->all());
+        return $this->parseElementField();
     }
 }

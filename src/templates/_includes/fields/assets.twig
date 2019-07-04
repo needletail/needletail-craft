@@ -21,6 +21,52 @@
     } %}
 {% endif %}
 
+{% set attributeFields = [] %}
+
+{% set attributeFields = [{
+    name: 'Title',
+    handle: 'title',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Filename',
+    handle: 'filename',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'File size',
+    handle: 'size',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'URL',
+    handle: 'url',
+    instructions: 'The entry URL.' | t('needletail'),
+    default: {
+        type: 'text',
+    }
+}, {
+    type: 'date',
+    name: 'Date created',
+    handle: 'dateCreated',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('needletail'),
+    default: {
+        type: 'dateTime',
+    }
+}, {
+    type: 'date',
+    name: 'Date modified',
+    handle: 'dateModified',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('needletail'),
+    default: {
+        type: 'dateTime',
+    }
+}] %}
+
+
 {# Get any sub-fields for the element. Also check to go only one level deep #}
 {% if field is defined and isSubElementField is not defined %}
     {% set elementFields = [] %}

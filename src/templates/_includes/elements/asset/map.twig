@@ -1,15 +1,9 @@
 {% if bucket.elementData %}
-    {% set groupId = bucket.elementData[bucket.elementType] %}
-    {% set group = craft.app.categories.getGroupById(groupId) %}
+    {% set sourceId = bucket.elementData[bucket.elementType] %}
+
+    {% set source = craft.app.volumes.getVolumeById(sourceId) %}
+    {% set folders = craft.needletail.getAssetFolderBySourceId(sourceId) %}
 {% endif %}
-
-{% set categories = [{ label: 'No default', value: '' }] %}
-
-{% for category in craft.categories.groupId(groupId).all() %}
-    {% set categories = categories | merge([{ label: category.title | slice(0, 40), value: category.id }]) %}
-{% endfor %}
-
-
 
 {% set fields = [{
     name: 'Title',
@@ -18,26 +12,46 @@
         type: 'text',
     },
 }, {
-    name: 'Slug',
-    handle: 'slug',
-    instructions: 'If not set, the Slug will be automatically created from Title.' | t('feed-me'),
+    name: 'Filename',
+    handle: 'filename',
     default: {
         type: 'text',
     },
 }, {
-    type: 'categories',
-    name: 'Parent',
-    handle: 'parent',
-    instructions: 'Select a parent category to import these categories under.' | t('feed-me'),
+    name: 'File size',
+    handle: 'size',
     default: {
-        type: 'select',
-        options: categories,
+        type: 'text',
+    },
+}, {
+    name: 'URL',
+    handle: 'url',
+    instructions: 'The entry URL.' | t('needletail'),
+    default: {
+        type: 'text',
+    }
+}, {
+    type: 'date',
+    name: 'Date created',
+    handle: 'dateCreated',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('needletail'),
+    default: {
+        type: 'dateTime',
+    }
+}, {
+    type: 'date',
+    name: 'Date modified',
+    handle: 'dateModified',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('needletail'),
+    default: {
+        type: 'dateTime',
     }
 }] %}
 
 
-<h2>{{ 'Category Fields' | t('needletail') }}</h2>
+{% set fields = fields | merge([]) %}
 
+<h2>{{ 'Asset Fields' | t('needletail') }}</h2>
 
 <table class="needletail-mapping data fullwidth collapsible">
     <thead>
@@ -54,11 +68,10 @@
     </tbody>
 </table>
 
-
 {% set tabs = [] %}
 
-{% if group.fieldLayoutId %}
-    {% set tabs = craft.app.fields.getLayoutById(group.fieldLayoutId).getTabs() %}
+{% if source.fieldLayoutId %}
+    {% set tabs = craft.app.fields.getLayoutById(source.fieldLayoutId).getTabs() %}
 
     {% for tab in tabs %}
         <hr>

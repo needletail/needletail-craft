@@ -52,6 +52,7 @@ class BucketModel extends Model
      */
     public function getElement()
     {
+
         $element = Needletail::$plugin->elements->getRegisteredElement($this->elementType);
 
         if ($element) {

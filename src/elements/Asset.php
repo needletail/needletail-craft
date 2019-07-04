@@ -4,30 +4,31 @@ namespace needletail\needletail\elements;
 
 use Cake\Utility\Hash;
 use Craft;
+use craft\elements\Asset as AssetElement;
 use craft\elements\Category as CategoryElement;
 use needletail\needletail\base\Element;
 use needletail\needletail\base\ElementInterface;
 use needletail\needletail\models\BucketModel;
 
-class Category extends Element implements ElementInterface
+class Asset extends Element implements ElementInterface
 {
     // Properties
     // =========================================================================
 
-    public static $name = 'Category';
-    public static $class = 'craft\elements\Category';
+    public static $name = 'Asset';
+    public static $class = 'craft\elements\Asset';
 
     // Templates
     // =========================================================================
 
     public function getGroupsTemplate()
     {
-        return 'needletail/_includes/elements/category/groups';
+        return 'needletail/_includes/elements/asset/groups';
     }
 
     public function getMappingTemplate()
     {
-        return 'needletail/_includes/elements/category/map';
+        return 'needletail/_includes/elements/asset/map';
     }
 
 
@@ -36,7 +37,7 @@ class Category extends Element implements ElementInterface
 
     public function getGroups()
     {
-        return Craft::$app->categories->getEditableGroups();
+        return Craft::$app->volumes->getAllVolumes();
     }
 
     /**
@@ -44,16 +45,23 @@ class Category extends Element implements ElementInterface
      * @param array $params
      * @return \craft\elements\db\ElementQueryInterface
      */
+
     public function getQuery(BucketModel $bucket, $params = [])
     {
-        $query = CategoryElement::find()
+        $query = AssetElement::find()
             ->anyStatus()
-            ->groupId($bucket->elementData[CategoryElement::class])
+            ->volumeId($bucket->elementData[AssetElement::class])
+            ->includeSubfolders()
             ->siteId($bucket->siteId ?: Craft::$app->getSites()->getPrimarySite()->id);
 
         Craft::configure($query, $params);
 
         return $query;
+    }
+
+    public function parseSize($element, $data)
+    {
+        return $this->parseAnInteger($element->size);
     }
 
 }

@@ -209,6 +209,37 @@ class NeedletailVariable extends ServiceLocator
         return $sources;
     }
 
+    public function getAssetFolderBySourceId($id)
+    {
+        $folders = Craft::$app->assets->getFolderTreeByVolumeIds([$id]);
+
+        $return = [];
+
+        $return[''] = Craft::t('needletail', 'No default');
+
+        if (is_array($folders)) {
+            foreach ($folders as $folder) {
+                $return[] = [
+                    'value' => 'root',
+                    'label' => Craft::t('needletail', 'Root Folder'),
+                ];
+
+                $children = $folder->getChildren();
+
+                if ($children) {
+                    foreach ($children as $childFolder) {
+                        $return[] = [
+                            'value' => $childFolder['id'],
+                            'label' => $childFolder['name'],
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $return;
+    }
+
     public function getTagSourcesByField($field)
     {
         if (!$field) {
@@ -223,17 +254,19 @@ class NeedletailVariable extends ServiceLocator
     public function supportedSubField($class)
     {
         $supportedSubFields = [
+            'craft\fields\Assets',
             'craft\fields\Checkboxes',
             'craft\fields\Color',
             'craft\fields\Date',
             'craft\fields\Dropdown',
+            'craft\fields\Entries',
             'craft\fields\Lightswitch',
             'craft\fields\Multiselect',
             'craft\fields\Number',
             'craft\fields\PlainText',
             'craft\fields\PositionSelect',
             'craft\fields\Radio',
-            'craft\fields\Redactor',
+            'craft\redactor\Field',
         ];
 
         return in_array($class, $supportedSubFields);

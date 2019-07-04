@@ -21,10 +21,66 @@
     } %}
 {% endif %}
 
+{% set attributeFields = [] %}
+
+{% set attributeFields = [{
+    name: 'Title',
+    handle: 'title',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Slug',
+    handle: 'slug',
+    instructions: 'If not set, the Slug will be automatically created from Title.' | t('needletail'),
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'URL',
+    handle: 'url',
+    instructions: 'The entry URL.' | t('needletail'),
+    default: {
+        type: 'text',
+    },
+}] %}
+
+{% set attributeFields = attributeFields | merge([{
+    type: 'date',
+    name: 'Post Date',
+    handle: 'postDate',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('needletail'),
+    default: {
+        type: 'dateTime',
+    },
+}, {
+    type: 'date',
+    name: 'Expiry Date',
+    handle: 'expiryDate',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.' | t('needletail'),
+    default: {
+        type: 'dateTime',
+    },
+}]) %}
+
+{% set attributeFields = attributeFields | merge([{
+    type: 'users',
+    name: 'Author',
+    handle: 'authorId',
+    instructions: 'Entries will be assigned to the user in this field. If the field does not match any existing member, the default author will be assigned.' | t('needletail'),
+    default: {
+        type: 'elementselect',
+        options: {
+            elementType: 'craft\\elements\\User',
+            selectionLabel: "Default Author" | t('needletail'),
+            limit: 1,
+        },
+    },
+}]) %}
+
 {# Get any sub-fields for the element. Also check to go only one level deep #}
 {% if field is defined and isSubElementField is not defined %}
     {% set elementFields = [] %}
-
     {# Prevent infinite loop by only allow elements that are not the same as this #}
     {% for elementField in craft.needletail.getElementLayoutByField(className(field), field) %}
         {% if craft.needletail.supportedSubField(className(elementField)) %}

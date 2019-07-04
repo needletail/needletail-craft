@@ -34,8 +34,12 @@ class DefaultField extends Field implements FieldInterface
     {
         $value = $this->element->getFieldValue($this->fieldHandle);
 
+        if ( is_null($value) )
+            return null;
+
         if ( is_string($value) )
             return $value;
+
 
         $stringableInstances = [
             ColorData::class,
@@ -47,17 +51,20 @@ class DefaultField extends Field implements FieldInterface
                 return (string) $value;
         }
 
+
         $multiOptionDataInstance = [
             MultiOptionsFieldData::class,
         ];
 
+
         foreach ( $multiOptionDataInstance as $optionDataInstance )
         {
-            return array_map(function ($item) {
-                if ( $item instanceof OptionData )
-                    return $item->label;
-                return $item;
-            }, (array) $value);
+            if ( $value instanceof $optionDataInstance )
+                return array_map(function ($item) {
+                    if ( $item instanceof OptionData )
+                        return $item->label;
+                    return $item;
+                }, (array) $value);
         }
 
         $singleOptionDataInstances = [
@@ -66,9 +73,10 @@ class DefaultField extends Field implements FieldInterface
 
         foreach ( $singleOptionDataInstances as $optionDataInstance )
         {
-            return $value->label;
+            if ( $value instanceof $optionDataInstance )
+                return $value->label;
         }
 
-        return "AAAAHHHH";
+        return $value;
     }
 }

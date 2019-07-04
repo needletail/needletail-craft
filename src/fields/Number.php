@@ -35,7 +35,7 @@ class Number extends Field implements FieldInterface
         if ( $decimals = $this->field->decimals )
             return number_format($value, $decimals, '.', '');
 
-        return $value;
+        return floatval($value);
     }
 
 }

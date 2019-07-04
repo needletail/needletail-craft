@@ -43,6 +43,16 @@ abstract class Element extends Component
         return $parsedValue;
     }
 
+    public function parseId($element, $data)
+    {
+        return (int) $element->id;
+    }
+
+    public function parseAuthorId($element, $data)
+    {
+        return $this->parseAnInteger($element->authorId);
+    }
+
     public function parsePostDate($element, $data)
     {
         return $this->parseADateTimeValue($element->postDate);
@@ -53,10 +63,25 @@ abstract class Element extends Component
         return $this->parseADateTimeValue($element->expiryDate);
     }
 
+    public function parseDateCreated($element, $data)
+    {
+        return $this->parseADateTimeValue($element->dateCreated);
+    }
+
+    public function parseDateModified($element, $data)
+    {
+        return $this->parseADateTimeValue($element->dateModified);
+    }
+
     public function parseADateTimeValue (\DateTime $date = null) {
         if ( ! $date )
             return $date;
 
         return $date->format('Y-m-d H:i:s');
+    }
+
+    public function parseAnInteger($string)
+    {
+        return (int) $string;
     }
 }

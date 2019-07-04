@@ -139,7 +139,7 @@ class Fields extends Component
         return $field;
     }
 
-    public function parseField(BucketModel $bucket, ElementInterface $element, $fieldHandle, $fieldInfo)
+    public function parseField(BucketModel $bucket, ElementInterface $element, $fieldHandle, $fieldInfo, $nestingLevel = 0)
     {
 //        if ($this->hasEventHandlers(self::EVENT_BEFORE_PARSE_FIELD)) {
 //            $this->trigger(self::EVENT_BEFORE_PARSE_FIELD, new FieldEvent([
@@ -159,6 +159,7 @@ class Fields extends Component
         $class->field = Craft::$app->fields->getFieldByHandle($fieldHandle);
         $class->element = $element;
         $class->bucket = $bucket;
+        $class->nestingLevel = $nestingLevel;
 
         // Get that sweet data
         $parsedValue = $class->parseField();

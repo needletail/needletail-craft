@@ -2,13 +2,21 @@
 
 namespace needletail\needletail\fields;
 
+use Cake\Utility\Hash;
 use craft\elements\Asset;
+use craft\elements\Entry;
+use needletail\needletail\Needletail as Plugin;
+use needletail\needletail\Needletail;
 
 class Assets extends Field implements FieldInterface
 {
     public static $name = 'Assets';
     public static $class = 'craft\fields\Assets';
     public static $elementType = 'craft\elements\Asset';
+
+    public $defaultSubAttributes = [
+        'title', 'filename', 'size', 'url'
+    ];
 
     public function getMappingTemplate()
     {
@@ -21,14 +29,6 @@ class Assets extends Field implements FieldInterface
 
     public function parseField()
     {
-        $query = $this->element->getFieldValue($this->fieldHandle);
-
-        return array_map(function (Asset $asset) {
-            return [
-                'id' => $asset->id,
-                'filename' => $asset->filename,
-                'url' => $asset->getUrl()
-            ];
-        }, $query->all());
+        return $this->parseElementField();
     }
 }

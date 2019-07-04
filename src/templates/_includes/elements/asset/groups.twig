@@ -1,0 +1,13 @@
+{% import '_includes/forms' as forms %}
+
+{% set assets = element.groups %}
+
+{{ forms.selectField({
+    label: "Asset Source" | t('feed-me'),
+    instructions: 'Choose the asset source you want to save your feed data into.' | t('feed-me'),
+    id: 'elementData-' ~ elementType,
+    name: 'elementData[' ~ elementType ~ ']',
+    options: craft.needletail.getSelectOptions(assets),
+    value: bucket.elementData[elementType] ?? '',
+    required: true,
+}) }}

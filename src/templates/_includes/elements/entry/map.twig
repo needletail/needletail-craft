@@ -117,18 +117,12 @@
             </thead>
             <tbody>
             {% for field in tab.getFields() %}
-{#                <tr>#}
-{#                    <th>{{  className(field) }}</th>#}
-{#                    <td></td>#}
-{#                    <td></td>#}
-{#                </tr>#}
                 {% set fieldClass = craft.needletail.fields.getRegisteredField(className(field)) %}
                 {% set template = fieldClass.getMappingTemplate() %}
 
                 {% set variables = { name: field.name, handle: field.handle, bucket: bucket, field: field, fieldClass: fieldClass } %}
 
                 {% include template ignore missing with variables only %}
-{#                {% include 'needletail/_includes/fields/default' with variables only %}#}
             {% endfor %}
             </tbody>
         </table>

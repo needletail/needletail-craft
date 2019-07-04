@@ -66,6 +66,7 @@ class Elements extends Component
         }
 
         $elements = [
+            Asset::class,
             Category::class,
             Entry::class
         ];

@@ -27,6 +27,7 @@
 
 {% set classes = classes ?? [] %}
 {% set elementFields = elementFields ?? null %}
+{% set attributeFields = attributeFields ?? null %}
 {% set isSubElementField = isSubElementField ?? null %}
 
 {% if isSubElementField %}
@@ -57,9 +58,8 @@
 
                 {% namespace namespace %}
                     {% block fieldSettings %}
-
                         {% if field and fieldClass %}
-                            <input type="text" name="field" value="{{ className(field) }}">
+                            <input type="hidden" name="field" value="{{ className(field) }}">
                         {% endif %}
                     {% endblock %}
                 {% endnamespace %}
@@ -170,30 +170,57 @@
     </td>
 </tr>
 
-{% block elementFields %}
-    {% if field is defined and elementFields | length %}
-        {% for elementField in elementFields %}
-            {% set fieldClass = craft.needletail.fields.getRegisteredField(className(elementField)) %}
-            {% set template = fieldClass.getMappingTemplate() %}
+{% if not isSubElementField %}
+    {% block attributeFields %}
+        {% if field is defined and attributeFields | length %}
+            {% for attributeField in attributeFields %}
 
-            {% if parentPath is defined %}
-                {% set path = parentPath | merge([ 'fields', elementField.handle ]) %}
-            {% else %}
-                {% set path = [ handle, 'fields', elementField.handle ] %}
-            {% endif %}
+                {% if parentPath is defined %}
+                    {% set path = parentPath | merge([ 'fields', attributeField.handle ]) %}
+                {% else %}
+                    {% set path = [ handle, 'fields', attributeField.handle ] %}
+                {% endif %}
 
-            {# Be smart about what we include to child field templates #}
-            {% include template ignore missing with {
-                name: elementField.name,
-                handle: elementField.handle,
-                instructionHandle: elementField.handle,
-                isSubElementField: true,
-                path: path,
+                {% include 'needletail/_includes/fields/default' with {
+                    name: attributeField.name,
+                    handle: attributeField.handle,
+                    default: attributeField.default,
+                    instructionHandle: attributeField.handle,
+                    isSubElementField: true,
+                    path: path,
+                    bucket: bucket,
+                    fieldClass: fieldClass
+                } only %}
 
-                bucket: bucket,
-                field: elementField,
-                fieldClass: fieldClass
-            } only %}
-        {% endfor %}
-    {% endif %}
-{% endblock %}
+            {% endfor %}
+        {% endif %}
+    {% endblock %}
+
+    {% block elementFields %}
+        {% if field is defined and elementFields | length %}
+            {% for elementField in elementFields %}
+                {% set fieldClass = craft.needletail.fields.getRegisteredField(className(elementField)) %}
+                {% set template = fieldClass.getMappingTemplate() %}
+
+                {% if parentPath is defined %}
+                    {% set path = parentPath | merge([ 'fields', elementField.handle ]) %}
+                {% else %}
+                    {% set path = [ handle, 'fields', elementField.handle ] %}
+                {% endif %}
+                {# Be smart about what we include to child field templates #}
+                {% include template ignore missing with {
+                    name: elementField.name,
+                    handle: elementField.handle,
+                    instructionHandle: elementField.handle,
+                    isSubElementField: true,
+                    path: path,
+                    bucket: bucket,
+                    field: elementField,
+                    fieldClass: fieldClass
+                } only %}
+            {% endfor %}
+        {% endif %}
+    {% endblock %}
+{% endif %}
+
+

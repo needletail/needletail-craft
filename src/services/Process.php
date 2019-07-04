@@ -61,7 +61,7 @@ class Process extends Component
 
     }
 
-    public function prepareMappingData(array $data)
+    public function prepareMappingData($data)
     {
         $mappingData = [
             'attributes' => [],
