@@ -15,19 +15,15 @@ class Categories extends Field implements FieldInterface
         return 'needletail/_includes/fields/categories';
     }
 
+    public $defaultSubAttributes = [
+        'title', 'slug', 'url'
+    ];
 
     // Public Methods
     // =========================================================================
 
     public function parseField()
     {
-        $query = $this->element->getFieldValue($this->fieldHandle);
-
-        return array_map(function (Category $category) {
-            return [
-                'id' => $category->id,
-                'title' => $category->title
-            ];
-        }, $query->all());
+        return $this->parseElementField();
     }
 }
