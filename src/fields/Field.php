@@ -76,7 +76,8 @@ abstract class Field extends Component
 
         $fieldMapping = $this->bucket->fieldMapping[$this->fieldHandle] ?? null;
 
-        $fieldMapping = Plugin::$plugin->process->prepareMappingData($fieldMapping['fields']);
+
+        $fieldMapping = Plugin::$plugin->process->prepareMappingData($fieldMapping['fields'] ?? []);
         $element = Needletail::$plugin->elements->getRegisteredElement($this->elementType);
 
         return array_map(function (ElementInterface $el) use ($fieldMapping, $element) {

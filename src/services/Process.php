@@ -68,6 +68,7 @@ class Process extends Component
             'fields' => []
         ];
 
+
         foreach ($data as $handle => $settings) {
             if (!Hash::get($settings, 'enabled')) {
                 continue;
