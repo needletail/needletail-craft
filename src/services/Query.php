@@ -24,6 +24,7 @@ class Query extends Component
 
     public function search($bucket, $params = [])
     {
-        return Needletail::$plugin->connection->search($bucket, $params)->toArray();
+        $prefix = Needletail::$plugin->settings->getBucketPrefix();
+        return Needletail::$plugin->connection->search($prefix.$bucket, $params)->toArray();
     }
 }
