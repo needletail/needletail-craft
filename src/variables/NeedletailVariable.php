@@ -59,6 +59,11 @@ class NeedletailVariable extends ServiceLocator
         return Needletail::$plugin->settings->getApiReadKey();
     }
 
+    public function query()
+    {
+        return Needletail::$plugin->query;
+    }
+
     public function getCpTabs()
     {
         return [

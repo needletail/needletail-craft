@@ -21,6 +21,7 @@ use needletail\needletail\services\Fields;
 use needletail\needletail\services\Hash;
 use needletail\needletail\services\Logs;
 use needletail\needletail\services\Process;
+use needletail\needletail\services\Query;
 use needletail\needletail\variables\NeedletailVariable;
 use needletail\needletail\twigextensions\NeedletailTwigExtension;
 use needletail\needletail\models\Settings;
@@ -63,6 +64,7 @@ use yii\base\Event;
  * @property  Hash $hash
  * @property  Logs $logs
  * @property  Process $process
+ * @property  Query $query
  * @property  Settings $settings
  * @method    Settings getSettings()
  */
@@ -178,6 +180,7 @@ class Needletail extends Plugin
             'fields'     => Fields::class,
             'hash'       => Hash::class,
             'logs'       => Logs::class,
+            'query'      => Query::class,
             'process'    => Process::class,
         ]);
 
