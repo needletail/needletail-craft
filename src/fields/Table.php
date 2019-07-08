@@ -2,7 +2,7 @@
 
 namespace needletail\needletail\fields;
 
-use Cake\Utility\Hash;
+use needletail\needletail\Needletail;
 
 class Table extends Field implements FieldInterface
 {
@@ -29,11 +29,11 @@ class Table extends Field implements FieldInterface
     {
         $fields = [];
 
-        $map = Hash::get($this->bucket->fieldMapping, $this->fieldHandle . '.fields');
+        $map = Needletail::$plugin->hash->get($this->bucket->fieldMapping, $this->fieldHandle . '.fields');
 
         foreach ( $map as $col ) {
-            if ( Hash::get($col, 'enabled') == "1") {
-                $fields[] = Hash::get($col, 'handle');
+            if ( Needletail::$plugin->hash->get($col, 'enabled') == "1") {
+                $fields[] = Needletail::$plugin->hash->get($col, 'handle');
             }
         }
 

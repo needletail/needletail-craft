@@ -2,7 +2,6 @@
 
 namespace needletail\needletail\services;
 
-use Cake\Utility\Hash;
 use craft\base\Component;
 use craft\base\ElementInterface;
 use needletail\needletail\Needletail as Plugin;
@@ -70,7 +69,7 @@ class Process extends Component
 
 
         foreach ($data as $handle => $settings) {
-            if (!Hash::get($settings, 'enabled')) {
+            if (!Needletail::$plugin->hash->get($settings, 'enabled')) {
                 continue;
             }
             unset($settings['enabled']);
@@ -89,10 +88,10 @@ class Process extends Component
     {
         $fieldData = [];
 
-        foreach (Hash::get($mappingData, 'attributes', []) as $handle => $data) {
+        foreach (Needletail::$plugin->hash->get($mappingData, 'attributes', []) as $handle => $data) {
             $fieldData[$handle] = $bucket->element->parseAttribute($element, $handle, $data);
         }
-        foreach (Hash::get($mappingData, 'fields', []) as $handle => $data) {
+        foreach (Needletail::$plugin->hash->get($mappingData, 'fields', []) as $handle => $data) {
             $fieldData[$handle] = Plugin::$plugin->fields->parseField($bucket, $element, $handle, $data);
         }
 

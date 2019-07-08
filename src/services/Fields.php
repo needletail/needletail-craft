@@ -19,16 +19,12 @@ use needletail\needletail\fields\Table;
 use needletail\needletail\fields\Tags;
 use needletail\needletail\fields\Users;
 use needletail\needletail\models\BucketModel;
-use verbb\feedme\FeedMe;
-use verbb\feedme\events\RegisterFeedMeFieldsEvent;
-use verbb\feedme\events\FieldEvent;
+use needletail\needletail\Needletail;
 
 use Craft;
 use craft\base\Component;
 use craft\db\Query;
 use craft\helpers\Component as ComponentHelper;
-
-use Cake\Utility\Hash;
 
 class Fields extends Component
 {
@@ -106,7 +102,7 @@ class Fields extends Component
                 Date::class,
                 Entries::class,
                 Lightswitch::class,
-                Matrix::class,
+//                Matrix::class,
                 Number::class,
                 RadioButtons::class,
                 Table::class,
@@ -151,7 +147,7 @@ class Fields extends Component
 
         $parsedValue = null;
 
-        $fieldClassHandle = Hash::get($fieldInfo, 'field');
+        $fieldClassHandle = Needletail::$plugin->hash->get($fieldInfo, 'field');
 
         // Find the class to deal with the attribute
         $class = $this->getRegisteredField($fieldClassHandle);

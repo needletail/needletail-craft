@@ -2,7 +2,6 @@
 
 namespace needletail\needletail\fields;
 
-use Cake\Utility\Hash;
 use craft\elements\Category;
 use craft\elements\Entry;
 use needletail\needletail\Needletail as Plugin;

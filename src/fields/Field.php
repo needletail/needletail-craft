@@ -2,7 +2,6 @@
 
 namespace needletail\needletail\fields;
 
-use Cake\Utility\Hash;
 use craft\base\Component;
 use craft\base\ElementInterface;
 use craft\elements\Asset;
@@ -86,11 +85,11 @@ abstract class Field extends Component
 
 
             if ( $this->nestingLevel < 1 ) {
-                foreach (Hash::get($fieldMapping, 'attributes', []) as $handle => $data) {
+                foreach (Needletail::$plugin->hash->get($fieldMapping, 'attributes', []) as $handle => $data) {
                     $fieldData[$handle] = $this->bucket->element->parseAttribute($el, $handle, $data);
                 }
 
-                foreach (Hash::get($fieldMapping, 'fields', []) as $handle => $data) {
+                foreach (Needletail::$plugin->hash->get($fieldMapping, 'fields', []) as $handle => $data) {
                     $fieldData[$handle] = Plugin::$plugin->fields->parseField($this->bucket, $el, $handle, $data, $newNestingLevel);
                 }
             } else {

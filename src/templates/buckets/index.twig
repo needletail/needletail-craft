@@ -22,8 +22,7 @@
             <th scope="col">{{ "Name" | t('needletail') }}</th>
             <th scope="col">{{ "Handle" | t('needletail') }}</th>
             <th scope="col">{{ "Element type" | t('needletail') }}</th>
-            <th scope="col">{{ "Element group" | t('needletail') }}</th>
-            <th class="thin"></th>
+            <th></th>
         </thead>
         <tbody>
         {% for bucket in buckets %}
@@ -36,10 +35,12 @@
                 <td class="code">
                     <span style="color: #bbb">{{ craft.needletail.getBucketPrefix }}</span>{{ bucket.handle }}
                 </td>
-                <td></td>
-                <td></td>
-                <td class="thin action">
-                    <a class="delete icon" title="{{ 'Delete' | t('buckets') }}" role="button"></a>
+                <td class="code">
+                    {{ bucket.elementType }}
+                </td>
+                <td class="action" style="text-align: right">
+                    <a class="btn small" href="{{ url('needletail/buckets/' ~ bucket.id ~ '/start') }}">Re-index</a>
+                    <a class="btn small submit delete" title="{{ 'Delete' | t('buckets') }}" role="button">Delete</a>
                 </td>
             </tr>
         {% endfor %}

@@ -3,8 +3,6 @@ namespace needletail\needletail\fields;
 
 use Craft;
 
-use Cake\Utility\Hash;
-
 class Checkboxes extends Field implements FieldInterface
 {
     // Properties

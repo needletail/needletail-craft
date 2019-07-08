@@ -1,7 +1,6 @@
 <?php
 namespace needletail\needletail\controllers;
 
-use craft\feedme\queue\jobs\FeedImport;
 use needletail\needletail\jobs\IndexBucket;
 use needletail\needletail\models\BucketModel;
 use needletail\needletail\Needletail;
@@ -9,9 +8,6 @@ use needletail\needletail\Needletail;
 use Craft;
 use craft\helpers\StringHelper;
 use craft\web\Controller;
-
-use Cake\Utility\Hash;
-use verbb\feedme\FeedMe;
 
 class BucketsController extends Controller
 {
@@ -63,19 +59,18 @@ class BucketsController extends Controller
         return $this->renderTemplate('needletail/buckets/_map', $variables);
     }
 
-    public function actionTest($bucketId)
+    public function actionStart($bucketId)
     {
+        Craft::$app->getSession()->setNotice(Craft::t('needletail', 'New index action successfully queued.'));
+
         $variables = [];
         $variables['bucket'] = Needletail::$plugin->buckets->getById($bucketId);
-
-//        $result = (Needletail::$plugin->process->processBatch($variables['bucket'], 100, 0));
 
         Craft::$app->getQueue()->delay(0)->push(new IndexBucket([
             'bucket' => $variables['bucket']
         ]));
 
-
-        return $this->renderTemplate('needletail/buckets/_test', $variables);
+        return $this->redirect('needletail/buckets');
     }
 
     /**

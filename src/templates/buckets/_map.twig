@@ -17,7 +17,7 @@
 {% block actionButton %}
     <div class="buttons">
         <input type="button" data-redirect="{{ craft.app.security.hashData('needletail/buckets/{id}/map') }}" class="btn submit" value="{{ 'Save' | t('needletail') }}">
-        <input type="button" data-redirect="{{ craft.app.security.hashData('needletail/buckets/{id}/test') }}" class="btn submit" value="{{ 'Save & Continue' | t('needletail') }}">
+        <input type="button" data-redirect="{{ craft.app.security.hashData('needletail/buckets/{id}/start') }}" class="btn submit" value="{{ 'Save & Index' | t('needletail') }}">
     </div>
 {% endblock %}
 

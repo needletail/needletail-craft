@@ -1,11 +1,7 @@
 <?php
 namespace needletail\needletail\fields;
 
-use verbb\feedme\helpers\DateHelper;
-
 use Craft;
-
-use Cake\Utility\Hash;
 
 class Date extends Field implements FieldInterface
 {

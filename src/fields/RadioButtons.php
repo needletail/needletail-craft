@@ -2,8 +2,6 @@
 
 namespace needletail\needletail\fields;
 
-use Cake\Utility\Hash;
-
 class RadioButtons extends Field implements FieldInterface
 {
     // Properties

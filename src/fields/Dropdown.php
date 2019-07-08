@@ -2,8 +2,6 @@
 
 namespace needletail\needletail\fields;
 
-use Cake\Utility\Hash;
-
 class Dropdown extends Field implements FieldInterface
 {
     // Properties

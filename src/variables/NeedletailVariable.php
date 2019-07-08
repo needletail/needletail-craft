@@ -63,7 +63,7 @@ class NeedletailVariable extends ServiceLocator
     {
         return [
             'buckets' => [ 'label' => Craft::t('needletail', 'Buckets'), 'url' => UrlHelper::cpUrl('needletail/buckets') ],
-            'help' => [ 'label' => Craft::t('needletail', 'Help'), 'url' => UrlHelper::cpUrl('needletail/help') ],
+//            'help' => [ 'label' => Craft::t('needletail', 'Help'), 'url' => UrlHelper::cpUrl('needletail/help') ],
         ];
     }
 

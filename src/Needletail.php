@@ -18,6 +18,7 @@ use needletail\needletail\services\DataTypes;
 use needletail\needletail\services\Elements;
 use needletail\needletail\services\Events;
 use needletail\needletail\services\Fields;
+use needletail\needletail\services\Hash;
 use needletail\needletail\services\Logs;
 use needletail\needletail\services\Process;
 use needletail\needletail\variables\NeedletailVariable;
@@ -59,6 +60,7 @@ use yii\base\Event;
  * @property  Elements $elements
  * @property  Events $events
  * @property  Fields $fields
+ * @property  Hash $hash
  * @property  Logs $logs
  * @property  Process $process
  * @property  Settings $settings
@@ -123,7 +125,7 @@ class Needletail extends Plugin
                 $event->rules['needletail/buckets/new'] = 'needletail/buckets/edit';
                 $event->rules['needletail/buckets/<bucketId:\d+>'] = 'needletail/buckets/edit';
                 $event->rules['needletail/buckets/<bucketId:\d+>/map'] = 'needletail/buckets/map';
-                $event->rules['needletail/buckets/<bucketId:\d+>/test'] = 'needletail/buckets/test';
+                $event->rules['needletail/buckets/<bucketId:\d+>/start'] = 'needletail/buckets/start';
             }
         );
 
@@ -174,6 +176,7 @@ class Needletail extends Plugin
             'elements'   => Elements::class,
             'events'     => Events::class,
             'fields'     => Fields::class,
+            'hash'       => Hash::class,
             'logs'       => Logs::class,
             'process'    => Process::class,
         ]);

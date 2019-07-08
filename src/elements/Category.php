@@ -2,7 +2,6 @@
 
 namespace needletail\needletail\elements;
 
-use Cake\Utility\Hash;
 use Craft;
 use craft\elements\Category as CategoryElement;
 use needletail\needletail\base\Element;

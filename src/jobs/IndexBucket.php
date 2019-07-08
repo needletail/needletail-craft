@@ -3,8 +3,6 @@
 namespace needletail\needletail\jobs;
 
 use Craft;
-use craft\feedme\Plugin;
-use craft\feedme\queue\jobs\FeedImport;
 use craft\queue\BaseJob;
 use needletail\needletail\models\BucketModel;
 use needletail\needletail\Needletail;

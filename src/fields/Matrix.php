@@ -4,12 +4,9 @@ namespace needletail\needletail\fields;
 use needletail\needletail\Needletail;
 use needletail\needletail\fields\Field;
 use needletail\needletail\fields\FieldInterface;
-use verbb\feedme\helpers\DataHelper;
 
 use Craft;
 use craft\db\Query;
-
-use Cake\Utility\Hash;
 
 class Matrix extends Field implements FieldInterface
 {
@@ -38,7 +35,7 @@ class Matrix extends Field implements FieldInterface
         $fieldData = [];
         $complexFields = [];
 
-        $blocks = Hash::get($this->fieldInfo, 'blocks');
+        $blocks = Needletail::$plugin->hash->get($this->fieldInfo, 'blocks');
 
         // Before we do anything, we need to extract the data from our feed and normalise it. This is especially
         // complex due to sub-fields, which each can be a variety of fields and formats, compounded by multiple or
@@ -59,12 +56,12 @@ class Matrix extends Field implements FieldInterface
                 $isComplexField = $fieldInfo['isComplexField'];
 
                 $nodePathSegments = explode('/', $nodePath);
-                $blockIndex = Hash::get($nodePathSegments, 1);
+                $blockIndex = Needletail::$plugin->hash->get($nodePathSegments, 1);
 
                 if (!is_numeric($blockIndex)) {
                     // Try to check if its only one-level deep (only importing one block type)
                     // which is particuarly common for JSON.
-                    $blockIndex = Hash::get($nodePathSegments, 2);
+                    $blockIndex = Needletail::$plugin->hash->get($nodePathSegments, 2);
 
                     if (!is_numeric($blockIndex)) {
                         $blockIndex = 0;
@@ -113,8 +110,8 @@ class Matrix extends Field implements FieldInterface
             $blockHandle = $parts[1];
             $subFieldHandle = $parts[2];
 
-            $subFieldInfo = Hash::get($complexInfo, 'info');
-            $nodePaths = Hash::get($complexInfo, 'data');
+            $subFieldInfo = Needletail::$plugin->hash->get($complexInfo, 'info');
+            $nodePaths = Needletail::$plugin->hash->get($complexInfo, 'data');
 
             $parsedValue = $this->_parseSubField($nodePaths, $subFieldHandle, $subFieldInfo);
 
@@ -137,8 +134,8 @@ class Matrix extends Field implements FieldInterface
             $blockHandle = $handles[1];
             $subFieldHandle = $handles[2];
 
-            $disabled = Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.disabled', false);
-            $collapsed = Hash::get($this->fieldInfo, 'blocks.' . $blockHandle . '.collapsed', false);
+            $disabled = Needletail::$plugin->hash->get($this->fieldInfo, 'blocks.' . $blockHandle . '.disabled', false);
+            $collapsed = Needletail::$plugin->hash->get($this->fieldInfo, 'blocks.' . $blockHandle . '.collapsed', false);
 
             // Prepare an array thats ready for Matrix to import it
             $preppedData[$blockIndex . '.type'] = $blockHandle;
@@ -150,9 +147,10 @@ class Matrix extends Field implements FieldInterface
             // $order++;
         }
 
-        $preppedData = Hash::expand($preppedData);
+        $new = [];
+        return Needletail::$plugin->hash->set($new, $preppedData);
 
-        return $preppedData;
+        return $new;
     }
 
 
@@ -162,15 +160,15 @@ class Matrix extends Field implements FieldInterface
     private function _getFieldMappingInfoForNodePath($nodePath, $blocks)
     {
         foreach ($blocks as $blockHandle => $blockInfo) {
-            $fields = Hash::get($blockInfo, 'fields');
+            $fields = Needletail::$plugin->hash->get($blockInfo, 'fields');
 
             $feedPath = preg_replace('/(\/\d+\/)/', '/', $nodePath);
             $feedPath = preg_replace('/^(\d+\/)|(\/\d+)/', '', $feedPath);
 
             foreach ($fields as $subFieldHandle => $subFieldInfo) {
-                $node = Hash::get($subFieldInfo, 'node');
+                $node = Needletail::$plugin->hash->get($subFieldInfo, 'node');
 
-                $nestedFieldNodes = Hash::extract($subFieldInfo, 'fields.{*}.node');
+                $nestedFieldNodes = Needletail::$plugin->hash->get($subFieldInfo, 'fields.*.node');
 
                 if ($nestedFieldNodes) {
                     foreach ($nestedFieldNodes as $key => $nestedFieldNode) {
@@ -201,7 +199,7 @@ class Matrix extends Field implements FieldInterface
 
     private function _parseSubField($feedData, $subFieldHandle, $subFieldInfo)
     {
-        $subFieldClassHandle = Hash::get($subFieldInfo, 'field');
+        $subFieldClassHandle = Needletail::$plugin->hash->get($subFieldInfo, 'field');
 
         $subField = Hash::extract($this->field->getBlockTypeFields(), '{n}[handle=' . $subFieldHandle . ']')[0];
 

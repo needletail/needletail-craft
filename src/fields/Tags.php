@@ -2,7 +2,6 @@
 
 namespace needletail\needletail\fields;
 
-use Cake\Utility\Hash;
 use Craft;
 use craft\base\Element as BaseElement;
 use craft\elements\db\TagQuery;

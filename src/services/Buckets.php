@@ -10,8 +10,6 @@ use needletail\needletail\events\BucketEvent;
 use needletail\needletail\models\BucketModel;
 use needletail\needletail\Needletail;
 use needletail\needletail\records\BucketRecord;
-use verbb\feedme\events\FeedEvent;
-use verbb\feedme\records\FeedRecord;
 use yii\base\Exception;
 use yii\caching\DbQueryDependency;
 
