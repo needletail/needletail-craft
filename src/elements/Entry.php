@@ -59,7 +59,7 @@ class Entry extends Element implements ElementInterface
     public function getQuery(BucketModel $bucket, $params = [])
     {
         $query = EntryElement::find()
-            ->anyStatus()
+            ->status(EntryElement::STATUS_LIVE)
             ->sectionId($bucket->elementData[EntryElement::class]['section'])
             ->typeId($bucket->elementData[EntryElement::class]['entryType'])
             ->siteId($bucket->siteId ?: Craft::$app->getSites()->getPrimarySite()->id);

@@ -48,7 +48,7 @@ class Asset extends Element implements ElementInterface
     public function getQuery(BucketModel $bucket, $params = [])
     {
         $query = AssetElement::find()
-            ->anyStatus()
+            ->status(AssetElement::STATUS_ENABLED)
             ->volumeId($bucket->elementData[AssetElement::class])
             ->includeSubfolders()
             ->siteId($bucket->siteId ?: Craft::$app->getSites()->getPrimarySite()->id);
