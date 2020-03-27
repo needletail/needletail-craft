@@ -2,7 +2,7 @@
     "name": "needletail/needletail-craft3",
     "description": "Needletail Search and Index package for Craft 3.x",
     "type": "craft-plugin",
-    "version": "0.5.3",
+    "version": "0.5.4",
     "keywords": [
         "craft",
         "cms",
@@ -18,7 +18,7 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.1.0",
+        "craftcms/cms": "^3.4.0",
         "needletail/needletail-php": ">=1.2.1"
     },
     "autoload": {

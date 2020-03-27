@@ -213,10 +213,10 @@ class Buckets extends Component
             return null;
         }
 
-        $record['elementData'] = Json::decode($record['elementData']);
-        $record['fieldMapping'] = Json::decode($record['fieldMapping']);
-
         $attributes = $record->toArray();
+
+        $attributes['elementData'] = Json::decode($attributes['elementData']);
+        $attributes['fieldMapping'] = Json::decode($attributes['fieldMapping']);
 
         return new BucketModel($attributes);
     }
