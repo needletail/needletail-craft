@@ -25,6 +25,11 @@ class Lightswitch extends Field implements FieldInterface
 
     public function parseField()
     {
-        // TODO: Implement parseField() method.
+        $value = $this->element->getFieldValue($this->fieldHandle);
+
+        if ( $value === NULL || $value === FALSE)
+            return $value;
+
+        return !!($value);
     }
 }

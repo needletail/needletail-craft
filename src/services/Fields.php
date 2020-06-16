@@ -15,6 +15,7 @@ use needletail\needletail\fields\Lightswitch;
 use needletail\needletail\fields\Matrix;
 use needletail\needletail\fields\Number;
 use needletail\needletail\fields\RadioButtons;
+use needletail\needletail\fields\Redactor;
 use needletail\needletail\fields\Table;
 use needletail\needletail\fields\Tags;
 use needletail\needletail\fields\Users;
@@ -105,6 +106,7 @@ class Fields extends Component
 //                Matrix::class,
                 Number::class,
                 RadioButtons::class,
+                Redactor::class,
                 Table::class,
                 Tags::class,
                 Users::class,
