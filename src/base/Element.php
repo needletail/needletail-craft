@@ -77,7 +77,7 @@ abstract class Element extends Component
         if ( ! $date )
             return $date;
 
-        return $date->format('Y-m-d H:i:s');
+        return $date->format(\DateTime::ATOM);
     }
 
     public function parseAnInteger($string)
