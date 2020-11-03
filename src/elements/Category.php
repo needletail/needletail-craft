@@ -47,7 +47,7 @@ class Category extends Element implements ElementInterface
     {
         $query = CategoryElement::find()
             ->status(CategoryElement::STATUS_ENABLED)
-            ->groupId($bucket->elementData[CategoryElement::class])
+            ->groupId($bucket->getElementData()[CategoryElement::class])
             ->siteId($bucket->siteId ?: Craft::$app->getSites()->getPrimarySite()->id);
 
         Craft::configure($query, $params);
