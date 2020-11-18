@@ -67,7 +67,6 @@ class Process extends Component
             'fields' => []
         ];
 
-
         foreach ($data as $handle => $settings) {
             if (!Needletail::$plugin->hash->get($settings, 'enabled')) {
                 continue;

@@ -17,14 +17,13 @@ class Query extends Component
 
     public function usingKey($publicApiKey)
     {
-        $this->connection->setClient($publicApiKey);
+        $this->connection->setReadClient($publicApiKey);
 
         return $this;
     }
 
-    public function search($bucket, $params = [])
+    public function search($params = [])
     {
-        $prefix = Needletail::$plugin->settings->getBucketPrefix();
-        return Needletail::$plugin->connection->search($prefix.$bucket, $params)->toArray();
+        return Needletail::$plugin->connection->search($params)->toArray();
     }
 }

@@ -3,33 +3,47 @@
 namespace needletail\needletail\services;
 
 use craft\base\Component;
-use Needletail\Bucket;
+use Needletail\Entities\Bucket;
 use Needletail\Client;
 use needletail\needletail\Needletail;
-use Needletail\NeedletailResult;
 
 class Connection extends Component
 {
-    public $activeClient = null;
+    public $readClient = null;
+    public $writeClient = null;
 
     /**
      * @return Client
      */
-    public function getClient()
+    public function getReadClient()
     {
-        if ( $this->activeClient )
-            return $this->activeClient;
+        if (! $this->readClient )
+            $this->setReadClient();
 
-        $this->setClient();
-
-        return $this->activeClient;
+        return $this->readClient;
     }
 
-    public function setClient($apiReadKey = null, $apiWriteKey = null)
+    public function getWriteClient()
     {
-        $this->activeClient = new \Needletail\Client(
-            $apiReadKey ?? Needletail::$plugin->getSettings()->getApiReadKey(),
-            $apiWriteKey ?? Needletail::$plugin->getSettings()->getApiWriteKey()
+        if (! $this->writeClient )
+            $this->setWriteClient();
+
+        return $this->writeClient;
+    }
+
+    public function setReadClient($apiKey = null)
+    {
+        $this->readClient = new \Needletail\Client(
+            $apiKey ?? Needletail::$plugin->getSettings()->getApiReadKey()
+        );
+
+        return $this;
+    }
+
+    public function setWriteClient($apiKey = null)
+    {
+        $this->writeClient = new \Needletail\Client(
+            $apiKey ?? Needletail::$plugin->getSettings()->getApiWriteKey()
         );
 
         return $this;
@@ -37,7 +51,10 @@ class Connection extends Component
 
     public function initBucket($name)
     {
-        return $this->getClient()->initBucket($name) instanceof Bucket;
+        $bucket = (new Bucket())
+            ->setName($name);
+
+        return $this->getWriteClient()->buckets()->create($bucket) instanceof Bucket;
     }
 
     /**
@@ -46,36 +63,30 @@ class Connection extends Component
      */
     public function listBuckets()
     {
-        if ($buckets = $this->getClient()->list()->buckets)
-            return $buckets->toArray();
-
-        return [];
+       return $this->getReadClient()->buckets()->all();
     }
 
-    public function search($bucket, array $params)
+    public function search(array $params)
     {
-        $bucket = $this->getClient()->initBucket($bucket);
-
-        return $bucket->search($params);
+        return $this->getReadClient()->search($params);
     }
 
-    public function bulk($bucket, $array = [])
+    public function bulk($name, array $params = [])
     {
-        $bucket = $this->getClient()->initBucket($bucket);
-        return $bucket->bulk($array);
+        $bucket = $this->getWriteClient()->buckets()->find($name);
+
+        return $bucket->bulkDocuments()->create($params);
     }
 
-    public function update($bucket, $data)
+    public function update($name, $data)
     {
-        $id = $data['id'];
-        unset($data['id']);
-        $bucket = $this->getClient()->initBucket($bucket);
-        return $bucket->updateDocument($id, $data);
+        $bucket = $this->getWriteClient()->buckets()->find($name);
+        return $bucket->documents()->create($data);
     }
 
-    public function delete($bucket, $id)
+    public function delete($name, $id)
     {
-        $bucket = $this->getClient()->initBucket($bucket);
-        return $bucket->deleteDocument($id);
+        $bucket = $this->getWriteClient()->buckets()->find($name);
+        return $bucket->documents()->destroy($id);
     }
 }
