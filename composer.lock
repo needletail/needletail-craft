@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1521102869c0064300ba2c290c6a3f31",
+    "content-hash": "fd45e5938357166c4c6ce073f884c304",
     "packages": [
         {
             "name": "cebe/markdown",
@@ -2133,12 +2133,18 @@
             "time": "2019-11-26T17:56:10+00:00"
         },
         {
-            "name": "needletail/needletail-php-rework",
-            "version": "dev-master",
+            "name": "needletail/needletail-php",
+            "version": "3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/needletail/needletail-php.git",
+                "reference": "5bd0a9ec95ff6a2ac377b7e4680a470b1f11c37f"
+            },
             "dist": {
-                "type": "path",
-                "url": "../needletail-php-rework",
-                "reference": "050b4a939da7b8b6a7d32f67720b389f28c576e8"
+                "type": "zip",
+                "url": "https://api.github.com/repos/needletail/needletail-php/zipball/5bd0a9ec95ff6a2ac377b7e4680a470b1f11c37f",
+                "reference": "5bd0a9ec95ff6a2ac377b7e4680a470b1f11c37f",
+                "shasum": ""
             },
             "require": {
                 "ext-json": "*",
@@ -2150,6 +2156,7 @@
                     "Needletail\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2160,9 +2167,11 @@
                 }
             ],
             "description": "A PHP interface for Needletail.",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/needletail/needletail-php/issues",
+                "source": "https://github.com/needletail/needletail-php/tree/v3.0.1"
+            },
+            "time": "2020-12-21T09:14:59+00:00"
         },
         {
             "name": "opis/closure",
@@ -5555,12 +5564,10 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "needletail/needletail-php-rework": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.0.0"
 }

@@ -73,20 +73,16 @@ class Connection extends Component
 
     public function bulk($name, array $params = [])
     {
-        $bucket = $this->getWriteClient()->buckets()->find($name);
-
-        return $bucket->bulkDocuments()->create($params);
+        return $this->getWriteClient()->documents()->bulk($name)->create($params);
     }
 
     public function update($name, $data)
     {
-        $bucket = $this->getWriteClient()->buckets()->find($name);
-        return $bucket->documents()->create($data);
+        return $this->getWriteClient()->documents()->single($name)->create($data);
     }
 
     public function delete($name, $id)
     {
-        $bucket = $this->getWriteClient()->buckets()->find($name);
-        return $bucket->documents()->destroy($id);
+        return $this->getWriteClient()->documents()->single($name)->destroy($id);
     }
 }
