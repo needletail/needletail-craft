@@ -49,7 +49,7 @@ class Asset extends Element implements ElementInterface
     {
         $query = AssetElement::find()
             ->status(AssetElement::STATUS_ENABLED)
-            ->volumeId($bucket->elementData[AssetElement::class])
+            ->volumeId($bucket->getElementData()[AssetElement::class])
             ->includeSubfolders()
             ->siteId($bucket->siteId ?: Craft::$app->getSites()->getPrimarySite()->id);
 

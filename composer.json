@@ -1,5 +1,5 @@
 {
-    "name": "needletail/needletail-craft3-rework",
+    "name": "needletail/needletail-craft3",
     "description": "Needletail Search and Index package for Craft 3.x",
     "type": "craft-plugin",
     "version": "3.0.1",

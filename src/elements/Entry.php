@@ -60,8 +60,8 @@ class Entry extends Element implements ElementInterface
     {
         $query = EntryElement::find()
             ->status(EntryElement::STATUS_LIVE)
-            ->sectionId($bucket->elementData[EntryElement::class]['section'])
-            ->typeId($bucket->elementData[EntryElement::class]['entryType'])
+            ->sectionId($bucket->getElementData()[EntryElement::class]['section'])
+            ->typeId($bucket->getElementData()[EntryElement::class]['entryType'])
             ->siteId($bucket->siteId ?: Craft::$app->getSites()->getPrimarySite()->id);
 
         Craft::configure($query, $params);

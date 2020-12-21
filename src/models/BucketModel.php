@@ -3,6 +3,7 @@
 namespace needletail\needletail\models;
 
 use craft\base\Model;
+use craft\helpers\Json as JsonHelper;
 use needletail\needletail\base\ElementInterface;
 use needletail\needletail\Needletail;
 
@@ -65,5 +66,13 @@ class BucketModel extends Model
     public function getHandleWithPrefix()
     {
         return sprintf('%s%s', Needletail::$plugin->settings->getBucketPrefix(), $this->handle);
+    }
+
+    public function getElementData()
+    {
+        if (!is_array($this->elementData)) {
+            return JsonHelper::decode($this->elementData);
+        }
+        return $this->elementData;
     }
 }
