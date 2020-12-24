@@ -8,6 +8,7 @@ use craft\helpers\Component as ComponentHelper;
 use needletail\needletail\base\ElementInterface;
 use needletail\needletail\elements\Asset;
 use needletail\needletail\elements\Category;
+use needletail\needletail\elements\CommerceProduct;
 use needletail\needletail\elements\Entry;
 use needletail\needletail\events\RegisterNeedletailElementsEvent;
 
@@ -68,6 +69,7 @@ class Elements extends Component
         $elements = [
             Asset::class,
             Category::class,
+            CommerceProduct::class,
             Entry::class
         ];
 

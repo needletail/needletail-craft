@@ -1,0 +1,291 @@
+{% if bucket.elementData %}
+{#    {% set groupId = bucket.elementData[bucket.elementType] %}#}
+{#    {% set group = craft.app.categories.getGroupById(groupId) %}#}
+
+    {% set productTypeId = bucket.elementData[bucket.elementType] %}
+    {% set productType = craft.commerce.productTypes.getProductTypeById(productTypeId) %}
+{% endif %}
+
+
+{% set taxCategories = [] %}
+{% for item in productType.taxCategories %}
+    {% set taxCategories = taxCategories|merge([{ value: item.id, label: item.name }]) %}
+{% endfor %}
+
+{% set shippingCategories = [] %}
+{% for item in productType.shippingCategories %}
+    {% set shippingCategories = shippingCategories|merge([{ value: item.id, label: item.name }]) %}
+{% endfor %}
+
+
+
+{% set fields = [{
+    name: 'Title',
+    handle: 'title',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Slug',
+    handle: 'slug',
+    instructions: 'If not set, the Slug will be automatically created from Title.' | t('needletail'),
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Post Date',
+    handle: 'postDate',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.'|t('needletail'),
+    default: {
+        type: 'dateTime',
+    },
+}, {
+    name: 'Expiry Date',
+    handle: 'expiryDate',
+    instructions: 'Accepts Unix timestamp, or just about any English textual datetime description.'|t('needletail'),
+    default: {
+        type: 'dateTime',
+    }
+}, {
+    name: 'Status',
+    handle: 'enabled',
+    instructions: 'Choose either a default status from the list or the imported field that will contain the status.'|t('needletail'),
+    default: {
+        type: 'select',
+        options: [
+            { label: 'Don’t import'|t('needletail'), value: '' },
+            { label: 'Enabled', value: '1' },
+            { label: 'Disabled', value: '0' },
+        ],
+    },
+}, {
+    name: 'Tax Category',
+    handle: 'taxCategoryId',
+    required: true,
+    default: {
+        type: 'select',
+        options: taxCategories,
+    },
+}, {
+    name: 'Shipping Category',
+    handle: 'shippingCategoryId',
+    required: true,
+    default: {
+        type: 'select',
+        options: shippingCategories,
+    },
+}, {
+    name: 'Available for Purchase',
+    handle: 'availableForPurchase',
+    default: {
+        type: 'checkbox',
+    },
+}, {
+    name: 'Free Shipping',
+    handle: 'freeShipping',
+    default: {
+        type: 'checkbox',
+    },
+}, {
+    name: 'Promotable',
+    handle: 'promotable',
+    default: {
+        type: 'checkbox',
+    },
+}, {
+    name: 'URL',
+    handle: 'url',
+    instructions: 'The product URL.' | t('needletail'),
+    default: {
+        type: 'text',
+    },
+}] %}
+
+
+
+{% set fieldsVariants = [{
+    name: 'Enabled',
+    handle: 'variant-enabled',
+    default: {
+        type: 'select',
+        options: [
+            { label: 'Don’t import'|t('needletail'), value: '' },
+            { label: 'Enabled', value: '1' },
+            { label: 'Disabled', value: '0' },
+        ],
+    },
+}, {
+    name: 'Title',
+    handle: 'variant-title',
+    required: true,
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'SKU',
+    handle: 'variant-sku',
+    required: true,
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Price',
+    handle: 'variant-price',
+    required: true,
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Stock',
+    handle: 'variant-stock',
+    required: true,
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Unlimited Stock',
+    handle: 'variant-hasUnlimitedStock',
+    default: {
+        type: 'checkbox',
+    },
+}, {
+    name: 'Is Default',
+    handle: 'variant-isDefault',
+    default: {
+        type: 'checkbox',
+    },
+}, {
+    name: 'Minimum allowed quantity',
+    handle: 'variant-minQty',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Maximum allowed quantity',
+    handle: 'variant-maxQty',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Dimensions - Length',
+    handle: 'variant-length',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Dimensions - Width',
+    handle: 'variant-width',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Dimensions - Height',
+    handle: 'variant-height',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Weight',
+    handle: 'variant-weight',
+    default: {
+        type: 'text',
+    },
+}] %}
+
+<h2>{{ 'Product Fields' | t('needletail') }}</h2>
+
+<table class="needletail-mapping data fullwidth collapsible">
+    <thead>
+    <th style="width: 45%">{{ 'Field' | t('needletail') }}</th>
+    <th>{{ 'Enabled' | t('needletail') }}</th>
+    <th style="width: 45%">{{ 'Default Value' | t('needletail') }}</th>
+    </thead>
+    <tbody>
+    {% for field in fields %}
+        {% set template = field.type ?? 'default' %}
+        {% set variables = field | merge({ bucket: bucket, attribute: true }) %}
+        {% include 'needletail/_includes/fields/default' with variables only %}
+    {% endfor %}
+    </tbody>
+</table>
+
+
+<h2>{{ 'Product Variant Fields'|t('needletail') }}</h2>
+
+<table class="feedme-mapping data fullwidth collapsible">
+    <thead>
+    <th>{{ 'Field'|t('needletail') }}</th>
+    <th>{{ 'Enabled'|t('needletail') }}</th>
+    <th>{{ 'Default Value'|t('needletail') }}</th>
+    </thead>
+    <tbody>
+    {% for field in fieldsVariants %}
+        {% set template = field.type ?? 'default' %}
+        {% set variables = field | merge({ bucket: bucket, attribute: true }) %}
+        {% include 'needletail/_includes/fields/default' with variables only %}
+    {% endfor %}
+    </tbody>
+</table>
+
+
+{% set productTabs = [] %}
+
+{% if productType.fieldLayoutId %}
+    {% set productTabs = craft.app.fields.getLayoutById(productType.fieldLayoutId).getTabs() %}
+
+    {% for tab in productTabs %}
+        <hr>
+
+        <h2>{{ tab.name }} Fields</h2>
+
+        <table class="feedme-mapping data fullwidth collapsible">
+            <thead>
+            <th>{{ 'Field'|t('needletail') }}</th>
+            <th>{{ 'Enabled'|t('needletail') }}</th>
+            <th>{{ 'Default Value'|t('needletail') }}</th>
+            </thead>
+            <tbody>
+            {% for field in tab.getFields() %}
+                {% set fieldClass = craft.needletail.fields.getRegisteredField(className(field)) %}
+                {% set template = fieldClass.getMappingTemplate() %}
+
+                {% set variables = { name: field.name, handle: field.handle, bucket: bucket, field: field, fieldClass: fieldClass } %}
+
+                {% include template ignore missing with variables only %}
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+{% endif %}
+
+
+
+{% set variantTabs = [] %}
+
+{% if productType.variantFieldLayoutId %}
+    {% set variantTabs = craft.app.fields.getLayoutById(productType.variantFieldLayoutId).getTabs() %}
+
+    {% for tab in variantTabs %}
+        <hr>
+
+        <h2>{{ "Variant Fields"|t('needletail') }}</h2>
+
+        <table class="feedme-mapping data fullwidth collapsible">
+            <thead>
+            <th>{{ 'Field'|t('needletail') }}</th>
+            <th>{{ 'Enabled'|t('needletail') }}</th>
+            <th>{{ 'Default Value'|t('needletail') }}</th>
+            </thead>
+            <tbody>
+            {% for field in tab.getFields() %}
+                {% set fieldClass = craft.needletail.fields.getRegisteredField(className(field)) %}
+                {% set template = fieldClass.getMappingTemplate() %}
+
+                {% set variables = { name: field.name, handle: 'variant-'~field.handle, bucket: bucket, field: field, fieldClass: fieldClass } %}
+
+                {% include template ignore missing with variables only %}
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+{% endif %}

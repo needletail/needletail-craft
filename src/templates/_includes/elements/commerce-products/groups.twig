@@ -1,0 +1,13 @@
+{% import '_includes/forms' as forms %}
+
+{% set productTypes = element.groups %}
+
+{{ forms.selectField({
+    label: "Commerce Product Type" | t('needletail'),
+    instructions: 'Choose the Commerce product type you want to index.' | t('needletail'),
+    id: 'elementData-' ~ elementType,
+    name: 'elementData[' ~ elementType ~ ']',
+    options: craft.needletail.getSelectOptions(productTypes),
+    value: bucket.elementData[elementType] ?? '',
+    required: true,
+}) }}

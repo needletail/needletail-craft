@@ -4,6 +4,7 @@ namespace needletail\needletail\services;
 
 use craft\base\Component;
 use craft\base\ElementInterface;
+use needletail\needletail\base\ParsesSelf;
 use needletail\needletail\Needletail as Plugin;
 use craft\helpers\App;
 use needletail\needletail\models\BucketModel;
@@ -66,12 +67,12 @@ class Process extends Component
             'attributes' => [],
             'fields' => []
         ];
-
         foreach ($data as $handle => $settings) {
             if (!Needletail::$plugin->hash->get($settings, 'enabled')) {
                 continue;
             }
             unset($settings['enabled']);
+
             $target = array_key_exists('field', $settings) ? 'fields' : 'attributes';
             if (array_key_exists('fields', $settings)) {
                 $settings['children'] = $this->prepareMappingData($settings['fields']);
@@ -85,6 +86,9 @@ class Process extends Component
 
     public function parseElement(ElementInterface $element, BucketModel $bucket, $mappingData)
     {
+        if ($bucket->element instanceof ParsesSelf)
+            return $bucket->element->parseElement($element, $bucket, $mappingData);
+
         $fieldData = [];
 
         foreach (Needletail::$plugin->hash->get($mappingData, 'attributes', []) as $handle => $data) {
