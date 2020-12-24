@@ -147,4 +147,10 @@ class CommerceProduct extends Element implements ElementInterface, ParsesSelf
             'id' => (int)$element->id,
         ], $fieldData, ['variants' => $variants]);
     }
+
+
+    public function parseType($element, $data)
+    {
+        return $element->type->name;
+    }
 }
