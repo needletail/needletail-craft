@@ -153,4 +153,9 @@ class CommerceProduct extends Element implements ElementInterface, ParsesSelf
     {
         return $element->type->name;
     }
+
+    public function parsePrice($element, $data)
+    {
+        return number_format($element->price, 2, '.', '');
+    }
 }
