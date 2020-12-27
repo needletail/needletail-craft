@@ -6,6 +6,9 @@ use craft\base\Component;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\events\ElementEvent;
+use needletail\needletail\jobs\DeleteElement;
+use needletail\needletail\jobs\IndexBucket;
+use needletail\needletail\jobs\IndexElement;
 use needletail\needletail\models\BucketModel;
 use needletail\needletail\Needletail;
 
@@ -24,7 +27,14 @@ class Events extends Component
             return;
 
         foreach ($buckets as $bucket ) {
-            Needletail::$plugin->process->processSingle($bucket, $event->element);
+            if ( Needletail::$plugin->getSettings()->processSingleElementsViaQueue ){
+                \Craft::$app->getQueue()->delay(0)->push(new IndexElement([
+                    'bucket' => $bucket,
+                    'element' => $event->element
+                ]));
+            } else {
+                Needletail::$plugin->process->processSingle($bucket, $event->element);
+            }
         }
     }
 
@@ -36,7 +46,14 @@ class Events extends Component
             return;
 
         foreach ($buckets as $bucket) {
-            Needletail::$plugin->process->processSingle($bucket, $event->element);
+            if ( Needletail::$plugin->getSettings()->processSingleElementsViaQueue ){
+                \Craft::$app->getQueue()->delay(0)->push(new IndexElement([
+                    'bucket' => $bucket,
+                    'element' => $event->element
+                ]));
+            } else {
+                Needletail::$plugin->process->processSingle($bucket, $event->element);
+            }
         }
     }
 
@@ -48,7 +65,14 @@ class Events extends Component
             return;
 
         foreach ($buckets as $bucket) {
-            Needletail::$plugin->process->deleteSingle($bucket, $event->element);
+            if ( Needletail::$plugin->getSettings()->processSingleElementsViaQueue ){
+                \Craft::$app->getQueue()->delay(0)->push(new DeleteElement([
+                    'bucket' => $bucket,
+                    'elementId' => $event->element->getId()
+                ]));
+            } else {
+                Needletail::$plugin->process->deleteSingle($bucket, $event->element);
+            }
         }
     }
 
@@ -60,7 +84,14 @@ class Events extends Component
             return;
 
         foreach ($buckets as $bucket) {
-            Needletail::$plugin->process->processSingle($bucket, $event->element);
+            if ( Needletail::$plugin->getSettings()->processSingleElementsViaQueue ){
+                \Craft::$app->getQueue()->delay(0)->push(new IndexElement([
+                    'bucket' => $bucket,
+                    'element' => $event->element
+                ]));
+            } else {
+                Needletail::$plugin->process->processSingle($bucket, $event->element);
+            }
         }
     }
 

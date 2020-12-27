@@ -10,8 +10,6 @@
 
 namespace needletail\needletail\models;
 
-use needletail\needletail\Needletail;
-
 use Craft;
 use craft\base\Model;
 
@@ -56,6 +54,14 @@ class Settings extends Model
     public $bucketPrefix = '';
 
     /**
+     * Setting to process single element actions, such as save or delete
+     * via the Craft queue
+     *
+     * @var bool
+     */
+    public $processSingleElementsViaQueue = true;
+
+    /**
      * Prefix bucket names
      *
      * @var string
@@ -79,7 +85,7 @@ class Settings extends Model
     {
         return [
             [['apiReadKey', 'apiWriteKey', 'bucketPrefix'], 'string'],
-            [['disableIndexingOnNonProduction'], 'boolean'],
+            [['disableIndexingOnNonProduction', 'processSingleElementsViaQueue'], 'boolean'],
         ];
     }
 

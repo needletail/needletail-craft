@@ -48,12 +48,12 @@ class Process extends Component
         Needletail::$plugin->connection->update($bucket->handleWithPrefix, $result);
     }
 
-    public function deleteSingle(BucketModel $bucket, ElementInterface $element)
+    public function deleteSingle(BucketModel $bucket, ElementInterface $element = null, $elementId = null)
     {
         if ( $this->shouldNotPerformWriteActions() )
             return false;
 
-        Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $element->getId());
+        Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $elementId ?? $element->getId());
     }
 
     public function afterProcess()

@@ -51,10 +51,16 @@
     suggestEnvVars: true})
 }}
 
-
 {{ forms.lightswitchField({
     label: 'Disable indexing on non-production environments',
     id: 'disableIndexingOnNonProduction',
     name: 'disableIndexingOnNonProduction',
     on: settings['disableIndexingOnNonProduction']})
+}}
+
+{{ forms.lightswitchField({
+    label: 'Process single elements via the Craft Queue',
+    id: 'processSingleElementsViaQueue',
+    name: 'processSingleElementsViaQueue',
+    on: settings['processSingleElementsViaQueue']})
 }}
