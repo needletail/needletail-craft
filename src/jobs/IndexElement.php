@@ -3,11 +3,9 @@
 namespace needletail\needletail\jobs;
 
 use Craft;
-use craft\base\ElementInterface;
 use craft\queue\BaseJob;
 use needletail\needletail\models\BucketModel;
 use needletail\needletail\Needletail;
-use yii\base\Exception;
 
 class IndexElement extends BaseJob
 {
@@ -20,16 +18,19 @@ class IndexElement extends BaseJob
     public $bucket;
 
     /**
-     * @var ElementInterface
+     * @var $elementId
      */
-    public $element;
+    public $elementId;
 
     // Public Methods
     // =========================================================================
 
     public function execute($queue)
     {
-        Needletail::$plugin->process->processSingle($this->bucket, $this->element);
+        $element = Craft::$app->elements->getElementById($this->elementId);
+        if ($element) {
+            Needletail::$plugin->process->processSingle($this->bucket, $element);
+        }
         $this->setProgress($queue, 100);
 
         return true;
@@ -45,6 +46,6 @@ class IndexElement extends BaseJob
      */
     protected function defaultDescription(): string
     {
-        return Craft::t('needletail', 'Sending `{name}` to Needletail', ['name' => $this->element->title]);
+        return Craft::t('needletail', 'Sending element to Needletail');
     }
 }

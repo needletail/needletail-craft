@@ -30,7 +30,7 @@ class Events extends Component
             if ( Needletail::$plugin->getSettings()->processSingleElementsViaQueue ){
                 \Craft::$app->getQueue()->delay(0)->push(new IndexElement([
                     'bucket' => $bucket,
-                    'element' => $event->element
+                    'elementId' => $event->element->getId()
                 ]));
             } else {
                 Needletail::$plugin->process->processSingle($bucket, $event->element);
@@ -49,7 +49,7 @@ class Events extends Component
             if ( Needletail::$plugin->getSettings()->processSingleElementsViaQueue ){
                 \Craft::$app->getQueue()->delay(0)->push(new IndexElement([
                     'bucket' => $bucket,
-                    'element' => $event->element
+                    'elementId' => $event->element->getId()
                 ]));
             } else {
                 Needletail::$plugin->process->processSingle($bucket, $event->element);
@@ -87,7 +87,7 @@ class Events extends Component
             if ( Needletail::$plugin->getSettings()->processSingleElementsViaQueue ){
                 \Craft::$app->getQueue()->delay(0)->push(new IndexElement([
                     'bucket' => $bucket,
-                    'element' => $event->element
+                    'elementId' => $event->element->getId()
                 ]));
             } else {
                 Needletail::$plugin->process->processSingle($bucket, $event->element);
