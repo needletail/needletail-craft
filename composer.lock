@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f44b3f8954a0c86488f4ff310273592a",
+    "content-hash": "94089471f7ca79c533dd8893a7504c94",
     "packages": [
         {
             "name": "cebe/markdown",
@@ -2314,16 +2314,16 @@
         },
         {
             "name": "needletail/needletail-php",
-            "version": "3.0.5",
+            "version": "3.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/needletail/needletail-php.git",
-                "reference": "bd116b61840ea1baa56950dc76fb18330e9cd417"
+                "reference": "3b97c8ab3fdb2c465295a122f0c49a7915161bba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/needletail/needletail-php/zipball/bd116b61840ea1baa56950dc76fb18330e9cd417",
-                "reference": "bd116b61840ea1baa56950dc76fb18330e9cd417",
+                "url": "https://api.github.com/repos/needletail/needletail-php/zipball/3b97c8ab3fdb2c465295a122f0c49a7915161bba",
+                "reference": "3b97c8ab3fdb2c465295a122f0c49a7915161bba",
                 "shasum": ""
             },
             "require": {
@@ -2349,9 +2349,9 @@
             "description": "A PHP interface for Needletail.",
             "support": {
                 "issues": "https://github.com/needletail/needletail-php/issues",
-                "source": "https://github.com/needletail/needletail-php/tree/v3.0.5"
+                "source": "https://github.com/needletail/needletail-php/tree/v3.0.6"
             },
-            "time": "2020-12-21T14:26:33+00:00"
+            "time": "2021-02-10T15:09:26+00:00"
         },
         {
             "name": "opis/closure",
