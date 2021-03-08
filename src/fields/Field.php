@@ -68,12 +68,13 @@ abstract class Field extends Component
         return $this::$elementType;
     }
 
-    public function parseElementField()
+    public function parseElementField($subMapping = null)
     {
         $query = $this->element->getFieldValue($this->fieldHandle);
         $all = $query->all();
 
-        $fieldMapping = $this->bucket->fieldMapping[$this->fieldHandle] ?? null;
+
+        $fieldMapping = $this->bucket->fieldMapping[$this->fieldHandle] ?? $this->bucket->fieldMapping['variant-' . $this->fieldHandle] ?? null;
 
 
         $fieldMapping = Plugin::$plugin->process->prepareMappingData($fieldMapping['fields'] ?? []);
@@ -82,7 +83,6 @@ abstract class Field extends Component
         return array_map(function (ElementInterface $el) use ($fieldMapping, $element) {
             $fieldData = [];
             $newNestingLevel = $this->nestingLevel + 1;
-
 
             if ( $this->nestingLevel < 1 ) {
                 foreach (Needletail::$plugin->hash->get($fieldMapping, 'attributes', []) as $handle => $data) {
