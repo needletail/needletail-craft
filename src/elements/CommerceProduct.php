@@ -136,7 +136,7 @@ class CommerceProduct extends Element implements ElementInterface, ParsesSelf
                 }
                 foreach ($variantFields as $handle => $data) {
                     $handle = StringHelper::afterFirst($handle, 'variant-');
-                    $append[$handle] = \needletail\needletail\Needletail::$plugin->fields->parseField($bucket, $variant, $handle, $data);
+                    $append[$handle] = \needletail\needletail\Needletail::$plugin->fields->parseField($bucket, $variant, $handle, $data, -1);
                 }
 
                 $variants[] = $append;
