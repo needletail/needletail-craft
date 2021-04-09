@@ -73,6 +73,7 @@ class Connection extends Component
 
     public function bulk($name, array $params = [])
     {
+        $this->getWriteClient()->buckets()->truncate($name);
         return $this->getWriteClient()->documents()->bulk($name)->create($params);
     }
 
