@@ -45,7 +45,11 @@ class Process extends Component
 
         $result = $this->parseElement($element, $bucket, $mappingData);
 
-        Needletail::$plugin->connection->update($bucket->handleWithPrefix, $result);
+        if ($element->getEnabledForSite()) {
+            Needletail::$plugin->connection->update($bucket->handleWithPrefix, $result);
+        } else {
+            Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $element->getId());
+        }
     }
 
     public function deleteSingle(BucketModel $bucket, ElementInterface $element = null, $elementId = null)
