@@ -4,6 +4,9 @@ namespace needletail\needletail\services;
 
 use craft\base\Component;
 use craft\base\ElementInterface;
+use craft\elements\Asset as AssetElement;
+use craft\elements\Category as CategoryElement;
+use craft\elements\Entry as EntryElement;
 use needletail\needletail\base\ParsesSelf;
 use needletail\needletail\Needletail as Plugin;
 use craft\helpers\App;
@@ -45,7 +48,7 @@ class Process extends Component
 
         $result = $this->parseElement($element, $bucket, $mappingData);
 
-        if ($element->getEnabledForSite()) {
+        if (\in_array($element->getStatus(), [AssetElement::STATUS_ENABLED, EntryElement::STATUS_LIVE, CategoryElement::STATUS_ENABLED])) {
             Needletail::$plugin->connection->update($bucket->handleWithPrefix, $result);
         } else {
             Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $element->getId());

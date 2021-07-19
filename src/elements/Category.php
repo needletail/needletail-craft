@@ -46,7 +46,7 @@ class Category extends Element implements ElementInterface
     public function getQuery(BucketModel $bucket, $params = [])
     {
         $query = CategoryElement::find()
-            ->status(CategoryElement::STATUS_ENABLED)
+            ->anyStatus()
             ->groupId($bucket->getElementData()[CategoryElement::class])
             ->siteId($bucket->siteId ?: Craft::$app->getSites()->getPrimarySite()->id);
 
