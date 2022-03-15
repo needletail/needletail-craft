@@ -22,12 +22,17 @@ class IndexElement extends BaseJob
      */
     public $elementId;
 
+    /**
+     * @var $siteId
+     */
+    public $siteId;
+
     // Public Methods
     // =========================================================================
 
     public function execute($queue)
     {
-        $element = Craft::$app->elements->getElementById($this->elementId);
+        $element = Craft::$app->elements->getElementById($this->elementId, null, $this->siteId);
         if ($element) {
             Needletail::$plugin->process->processSingle($this->bucket, $element);
         }
