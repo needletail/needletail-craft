@@ -73,13 +73,6 @@ class Connection extends Component
 
     public function bulk($name, array $params = [])
     {
-        try {
-            $this->getWriteClient()->buckets()->truncate($name);
-        }
-        catch (\Exception $e) {
-            // Bucket does not exist so can't truncate yet
-        }
-
         return $this->getWriteClient()->documents()->bulk($name)->create($params);
     }
 
