@@ -40,7 +40,7 @@ class IndexCPSectionAsset extends AssetBundle
     /**
      * Initializes the bundle.
      */
-    public function init()
+    public function init(): void
     {
         // define the path that your publishable resources live
         $this->sourcePath = "@needletail/needletail/assetbundles/indexcpsection/dist";

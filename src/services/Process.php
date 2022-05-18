@@ -118,7 +118,7 @@ class Process extends Component
 
     public function isRunningInNonProduction()
     {
-        return CRAFT_ENVIRONMENT !== 'production';
+        return App::env('CRAFT_ENVIRONMENT') !== 'production';
     }
 
     public function nonProductionIsDisabled()

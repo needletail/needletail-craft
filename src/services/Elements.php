@@ -28,7 +28,7 @@ class Elements extends Component
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 

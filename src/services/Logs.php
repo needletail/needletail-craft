@@ -25,7 +25,7 @@ class Logs extends Component
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         $this->logFile = Craft::$app->path->getLogPath() . '/needletail.log';
     }

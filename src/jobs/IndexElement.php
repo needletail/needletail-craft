@@ -30,15 +30,13 @@ class IndexElement extends BaseJob
     // Public Methods
     // =========================================================================
 
-    public function execute($queue)
+    public function execute($queue): void
     {
         $element = Craft::$app->elements->getElementById($this->elementId, null, $this->siteId);
         if ($element) {
             Needletail::$plugin->process->processSingle($this->bucket, $element);
         }
         $this->setProgress($queue, 100);
-
-        return true;
     }
 
     // Protected Methods

@@ -14,6 +14,7 @@ use Closure;
 use needletail\needletail\Needletail;
 
 use Craft;
+use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 /**
@@ -27,7 +28,7 @@ use Twig\TwigFunction;
  * @package   Needletail
  * @since     1.0.0
  */
-class NeedletailTwigExtension extends \Twig_Extension
+class NeedletailTwigExtension extends AbstractExtension
 {
     // Public Methods
     // =========================================================================

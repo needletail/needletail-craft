@@ -45,7 +45,7 @@ class Fields extends Component
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -93,7 +93,7 @@ class Fields extends Component
         if (count($this->_fields)) {
             return $this->_fields;
         }
-        
+
         $event = new RegisterNeedletailFieldsEvent([
             'fields' => [
                 Assets::class,

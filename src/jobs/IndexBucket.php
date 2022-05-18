@@ -27,7 +27,7 @@ class IndexBucket extends BaseJob
     // Public Methods
     // =========================================================================
 
-    public function execute($queue)
+    public function execute($queue): void
     {
         $query = $this->bucket->getElement()->getQuery($this->bucket, []);
         $elementCount = $query->count();
@@ -42,8 +42,6 @@ class IndexBucket extends BaseJob
             Needletail::$plugin->process->processBatch($this->bucket, $stepSize, $i * $stepSize);
             $this->setProgress($queue, ($i+1) / $steps);
         }
-
-        return true;
     }
 
     // Protected Methods

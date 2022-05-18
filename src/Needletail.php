@@ -89,7 +89,7 @@ class Needletail extends Plugin
      *
      * @var string
      */
-    public $schemaVersion = '1.0.0';
+    public string $schemaVersion = '1.0.0';
 
     // Public Methods
     // =========================================================================
@@ -105,7 +105,7 @@ class Needletail extends Plugin
      * you do not need to load it in your init() method.
      *
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
         self::$plugin = $this;
@@ -237,7 +237,7 @@ class Needletail extends Plugin
      *
      * @return \craft\base\Model|null
      */
-    protected function createSettingsModel()
+    protected function createSettingsModel(): ?\craft\base\Model
     {
         return new Settings();
     }

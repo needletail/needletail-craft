@@ -59,7 +59,7 @@ class NeedletailUtility extends Utility
      *
      * @return string|null The path to the utility SVG icon
      */
-    public static function iconPath()
+    public static function iconPath(): ?string
     {
         return Craft::getAlias("@needletail/needletail/assetbundles/needletailutilityutility/dist/img/NeedletailUtility-icon.svg");
     }
