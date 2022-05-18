@@ -1,6 +1,6 @@
 {
-    "name": "needletail/needletail-craft3",
-    "description": "Needletail Search and Index package for Craft 3.x",
+    "name": "needletail/needletail-craft",
+    "description": "Needletail Search and Index package for Craft CMS",
     "type": "craft-plugin",
     "keywords": [
         "craft",
