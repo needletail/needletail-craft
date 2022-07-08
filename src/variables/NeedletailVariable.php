@@ -133,18 +133,18 @@ class NeedletailVariable extends ServiceLocator
             return;
         }
 
-        return Craft::$app->fields->getFieldsByLayoutId($source->fieldLayoutId);
+        return $source->fieldLayout->getCustomFields();
     }
 
     public function getUserLayoutByField($field)
     {
-        $layoutId = Craft::$app->fields->getLayoutByType(UserElement::class)->id;
+        $layout = Craft::$app->fields->getLayoutByType(UserElement::class);
 
-        if (!$layoutId) {
+        if (!$layout->id) {
             return null;
         }
 
-        return Craft::$app->fields->getFieldsByLayoutId($layoutId);
+        return $layout->getCustomFields();
     }
 
 
