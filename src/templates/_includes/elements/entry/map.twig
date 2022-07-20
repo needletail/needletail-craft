@@ -33,6 +33,13 @@
     default: {
         type: 'number',
     },
+}, {
+    name: 'Status',
+    handle: 'status',
+    instructions: 'The entry status.' | t('needletail'),
+    default: {
+        type: 'bool',
+    },
 }] %}
 
 {% if section.type == 'structure' %}
