@@ -32,5 +32,11 @@
         "hasCpSection": true,
         "changelogUrl": "https://raw.githubusercontent.com/needletail-io/needletail-craft3/master/CHANGELOG.md",
         "class": "needletail\\needletail\\Needletail"
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
     }
 }

@@ -71,8 +71,7 @@
             <th style="width: 45%">{{ 'Default Value' | t('needletail') }}</th>
             </thead>
             <tbody>
-            {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
-                {% set field = layoutField.getField() %}
+            {% for field in tab.getFields() %}
                 {% set fieldClass = craft.needletail.fields.getRegisteredField(className(field)) %}
                 {% set template = fieldClass.getMappingTemplate() %}
 
