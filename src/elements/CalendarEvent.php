@@ -11,7 +11,7 @@ use needletail\needletail\base\Element;
 use needletail\needletail\base\ElementInterface;
 use needletail\needletail\models\BucketModel;
 
-class CalenderEvent extends Element implements ElementInterface
+class CalendarEvent extends Element implements ElementInterface
 {
     // Properties
     // =========================================================================
@@ -24,12 +24,12 @@ class CalenderEvent extends Element implements ElementInterface
 
     public function getGroupsTemplate()
     {
-        return 'needletail/_includes/elements/calender-events/groups';
+        return 'needletail/_includes/elements/calendar-events/groups';
     }
 
     public function getMappingTemplate()
     {
-        return 'needletail/_includes/elements/calender-events/map';
+        return 'needletail/_includes/elements/calendar-events/map';
     }
 
 
