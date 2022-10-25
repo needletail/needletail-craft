@@ -1,0 +1,86 @@
+{% if bucket.elementData %}
+    {% set calendarId = bucket.elementData[bucket.elementType] %}
+    {% set group = craft.calendar.events.setCalendarId(calendarId).one() %}
+{% endif %}
+
+{% set fields = [{
+    name: 'Title',
+    handle: 'title',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Slug',
+    handle: 'slug',
+    instructions: 'If not set, the Slug will be automatically created from Title.' | t('feed-me'),
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Start date',
+    handle: 'startDate',
+    default: {
+        type: 'dateTime'
+    }
+}, {
+    name: 'End date',
+    handle: 'endDate',
+    default: {
+        type: 'dateTime'
+    }
+}, {
+    name: 'All day',
+    handle: 'allDay',
+    default: {
+        type: 'bool'
+    }
+}] %}
+
+<h2>{{ 'Event Fields' | t('needletail') }}</h2>
+
+<table class="needletail-mapping data fullwidth collapsible">
+    <thead>
+    <th style="width: 45%">{{ 'Field' | t('needletail') }}</th>
+    <th>{{ 'Enabled' | t('needletail') }}</th>
+    <th style="width: 45%">{{ 'Default Value' | t('needletail') }}</th>
+    </thead>
+    <tbody>
+    {% for field in fields %}
+        {% set template = field.type ?? 'default' %}
+        {% set variables = field | merge({ bucket: bucket, attribute: true }) %}
+        {% include 'needletail/_includes/fields/default' with variables only %}
+    {% endfor %}
+    </tbody>
+</table>
+
+
+{% set tabs = [] %}
+
+{% if group.fieldLayoutId %}
+    {% set tabs = craft.app.fields.getLayoutById(group.fieldLayoutId).getTabs() %}
+
+    {% for tab in tabs %}
+        <hr>
+
+        <h2>{{ tab.name }} Fields</h2>
+
+        <table class="needletail-mapping data fullwidth collapsible">
+            <thead>
+            <th style="width: 45%">{{ 'Field' | t('needletail') }}</th>
+            <th>{{ 'Enabled' | t('needletail') }}</th>
+            <th style="width: 45%">{{ 'Default Value' | t('needletail') }}</th>
+            </thead>
+            <tbody>
+            {% for layoutField in tab.getElements()|filter(e => e is instance of('craft\\fieldlayoutelements\\CustomField')) %}
+                {% set field = layoutField.getField() %}
+                {% set fieldClass = craft.needletail.fields.getRegisteredField(className(field)) %}
+                {% set template = fieldClass.getMappingTemplate() %}
+
+                {% set variables = { name: field.name, handle: field.handle, bucket: bucket, field: field, fieldClass: fieldClass } %}
+
+                {% include template ignore missing with variables only %}
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+{% endif %}

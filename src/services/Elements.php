@@ -7,6 +7,7 @@ use craft\errors\MissingComponentException;
 use craft\helpers\Component as ComponentHelper;
 use needletail\needletail\base\ElementInterface;
 use needletail\needletail\elements\Asset;
+use needletail\needletail\elements\CalendarEvent;
 use needletail\needletail\elements\Category;
 use needletail\needletail\elements\CommerceProduct;
 use needletail\needletail\elements\Entry;
@@ -70,7 +71,8 @@ class Elements extends Component
             Asset::class,
             Category::class,
             CommerceProduct::class,
-            Entry::class
+            Entry::class,
+            CalendarEvent::class,
         ];
 
         $event = new RegisterNeedletailElementsEvent([
