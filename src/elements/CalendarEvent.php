@@ -38,7 +38,7 @@ class CalendarEvent extends Element implements ElementInterface
 
     public function getGroups()
     {
-        if (SolspacePlugin::getInstance()) {
+        if (Craft::$app->plugins->getPlugin('calendar') && SolspacePlugin::getInstance()) {
             return SolspacePlugin::getInstance()->calendars->getAllCalendars();
         }
     }
