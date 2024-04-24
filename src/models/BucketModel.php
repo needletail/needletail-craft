@@ -25,6 +25,8 @@ class BucketModel extends Model
     public $elementData;
     public $fieldMapping;
     public $siteId;
+    public $customMappingFile;
+    public $mappingTwigFile;
     public $dateCreated;
     public $dateUpdated;
     public $uid;

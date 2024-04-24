@@ -27,6 +27,23 @@ $(document).on('change', '#elementType', function() {
 
 $('#elementType').trigger('change');
 
+// Toggle various field when changing element type
+$(document).on('click', '#customMappingFile', function(_) {
+    if ($('[name="customMappingFile"]').val() == '1') {
+        $('#custom-mapping-select').show();
+
+        $('#save-and-index').show();
+        $('#save-and-map').hide();
+    } else {
+        $('#custom-mapping-select').hide();
+
+        $('#save-and-index').hide();
+        $('#save-and-map').show();
+    }
+});
+
+$('#customMappingFile').trigger('click');
+
 // Toggle the Entry Type field when changing the section select
 $(document).on('change', '.element-parent-group select', function() {
     var sections = $(this).parents('.element-sub-group').data('items');

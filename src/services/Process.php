@@ -30,11 +30,32 @@ class Process extends Component
         $query->limit($take);
         $results = $query->all();
 
-        $mappingData = $this->prepareMappingData($bucket->fieldMapping);
+        if ($bucket->customMappingFile) {
+            $results = array_map(function (ElementInterface $element) use ($bucket) {
+                if (file_exists(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile)) {
+                    $rendered = \Craft::$app->getView()->renderString(file_get_contents(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile), [
+                        'entry' => $element
+                    ]);
+                    $array = json_decode($rendered, true);
 
-        $results = array_map(function (ElementInterface $element) use ($bucket, $mappingData) {
-            return $this->parseElement($element, $bucket, $mappingData);
-        }, $results);
+                    if (is_null($array)) {
+                        throw new \Exception('Custom mapping file is not valid JSON: '.$rendered);
+                    }
+
+                    return array_merge([
+                        'id' => (int)$element->id,
+                    ]) + $array;
+                }
+
+                throw new \Exception('Custom mapping file not found');
+            }, $results);
+        } else {
+            $mappingData = $this->prepareMappingData($bucket->fieldMapping);
+
+            $results = array_map(function (ElementInterface $element) use ($bucket, $mappingData) {
+                return $this->parseElement($element, $bucket, $mappingData);
+            }, $results);
+        }
 
         Needletail::$plugin->connection->bulk($bucket->handleWithPrefix, $results);
     }

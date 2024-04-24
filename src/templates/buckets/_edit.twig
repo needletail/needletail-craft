@@ -20,7 +20,12 @@
 {% block actionButton %}
     <div class="buttons">
         <input type="button" data-redirect="{{ craft.app.security.hashData('needletail/buckets/{id}') }}" class="btn submit" value="{{ 'Save' | t('needletail') }}">
-        <input type="button" data-redirect="{{ craft.app.security.hashData('needletail/buckets/{id}/map') }}" class="btn submit" value="{{ 'Save & Continue' | t('needletail') }}">
+        <div id="save-and-map">
+            <input type="button" data-redirect="{{ craft.app.security.hashData('needletail/buckets/{id}/map') }}" class="btn submit" value="{{ 'Save & Continue' | t('needletail') }}">
+        </div>
+        <div id="save-and-index">
+            <input type="button" data-redirect="{{ craft.app.security.hashData('needletail/buckets/{id}/start') }}" class="btn submit" value="{{ 'Save & Index' | t('needletail') }}">
+        </div>
     </div>
 {% endblock %}
 
@@ -53,7 +58,29 @@
         required: true
     }) }}
 
+    {{ forms.lightswitchField({
+        label: 'Use a custom twig file for mapping.' | t('needletail'),
+        id: 'customMappingFile',
+        name: 'customMappingFile',
+        on: bucket.customMappingFile,})
+    }}
+
     <hr>
+
+    <div id="custom-mapping-select">
+        {{ forms.selectField({
+            label: "Twig file" | t('needletail'),
+            instructions: 'Choose the twig file you want to use, these need to be placed in the `templates/_needletail` folder ' | t('needletail'),
+            id: 'mappingTwigFile',
+            name: 'mappingTwigFile',
+            options: [{ label: 'Select', value: '' }] | merge(filesList),
+            value: bucket.mappingTwigFile,
+            errors: bucket.getErrors('mappingTwigFile'),
+            required: true,
+        }) }}
+
+        <hr>
+    </div>
 
     {% set elementsList = [] %}
     {% for elementClass, element in elements %}
@@ -105,5 +132,7 @@
 {% endblock %}
 
 {% js %}
-    {% if not bucket.handle %}new Craft.HandleGenerator('#name', '#handle');{% endif %}
+    {% if not bucket.handle %}
+        new Craft.HandleGenerator('#name', '#handle');
+    {% endif %}
 {% endjs %}
