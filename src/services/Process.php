@@ -65,9 +65,28 @@ class Process extends Component
         if ( $this->shouldNotPerformWriteActions() )
             return false;
 
-        $mappingData = $this->prepareMappingData($bucket->fieldMapping);
+        if ($bucket->customMappingFile) {
+            if (file_exists(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile)) {
+                $rendered = \Craft::$app->getView()->renderString(file_get_contents(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile), [
+                    'entry' => $element
+                ]);
+                $array = json_decode($rendered, true);
 
-        $result = $this->parseElement($element, $bucket, $mappingData);
+                if (is_null($array)) {
+                    throw new \Exception('Custom mapping file is not valid JSON: '.$rendered);
+                }
+
+                $result =  array_merge([
+                        'id' => (int)$element->id,
+                    ]) + $array;
+            } else {
+                throw new \Exception('Custom mapping file not found');
+            }
+        } else {
+            $mappingData = $this->prepareMappingData($bucket->fieldMapping);
+
+            $result = $this->parseElement($element, $bucket, $mappingData);
+        }
 
         if (\in_array($element->getStatus(), [AssetElement::STATUS_ENABLED, EntryElement::STATUS_LIVE, CategoryElement::STATUS_ENABLED])) {
             Needletail::$plugin->connection->update($bucket->handleWithPrefix, $result);
