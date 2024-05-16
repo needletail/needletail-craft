@@ -7,6 +7,7 @@ use craft\base\ElementInterface;
 use craft\elements\Asset as AssetElement;
 use craft\elements\Category as CategoryElement;
 use craft\elements\Entry as EntryElement;
+use craft\helpers\Json;
 use needletail\needletail\base\ParsesSelf;
 use needletail\needletail\Needletail as Plugin;
 use craft\helpers\App;
@@ -36,7 +37,9 @@ class Process extends Component
                     $rendered = \Craft::$app->getView()->renderString(file_get_contents(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile), [
                         'entry' => $element
                     ]);
-                    $array = json_decode($rendered, true);
+
+                    $rendered = $this->replaceNewlineInQuotes($rendered);
+                    $array = Json::decodeIfJson($rendered);
 
                     if (is_null($array)) {
                         throw new \Exception('Custom mapping file is not valid JSON: '.$rendered);
@@ -70,7 +73,9 @@ class Process extends Component
                 $rendered = \Craft::$app->getView()->renderString(file_get_contents(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile), [
                     'entry' => $element
                 ]);
-                $array = json_decode($rendered, true);
+
+                $rendered = $this->replaceNewlineInQuotes($rendered);
+                $array = Json::decodeIfJson($rendered);
 
                 if (is_null($array)) {
                     throw new \Exception('Custom mapping file is not valid JSON: '.$rendered);
@@ -164,5 +169,11 @@ class Process extends Component
     public function nonProductionIsDisabled()
     {
         return !! Needletail::$plugin->settings->disableIndexingOnNonProduction;
+    }
+
+    function replaceNewlineInQuotes($json) {
+        return preg_replace_callback('/"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/s', function($matches) {
+            return '"' . str_replace("\n", "\\n", $matches[1]) . '"';
+        }, $json);
     }
 }
