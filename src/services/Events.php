@@ -135,7 +135,7 @@ class Events extends Component
     private function getAllBucketsForElement(\craft\base\ElementInterface $element)
     {
         return array_filter($this->_buckets, function (BucketModel $bucketModel) use ($element) {
-            return $bucketModel->element->getQuery($bucketModel, ['id' => $element->id])->count() !== 0;
+            return count($bucketModel->element->getQuery($bucketModel, ['id' => $element->id])->all()) !== 0;
         });
     }
 }
