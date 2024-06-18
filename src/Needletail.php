@@ -42,6 +42,8 @@ use craft\events\RegisterUrlRulesEvent;
 
 use yii\base\Event;
 
+use Solspace\Calendar\Calendar as SolspacePlugin;
+
 /**
  * Craft plugins are very much like little applications in and of themselves. We’ve made
  * it as simple as we can, but the training wheels are off. A little prior knowledge is
@@ -200,6 +202,16 @@ class Needletail extends Plugin
         Event::on(\craft\services\Elements::class, \craft\services\Elements::EVENT_AFTER_UPDATE_SLUG_AND_URI, function (ElementEvent $event) {
             Needletail::$plugin->events->onUpdateSlugAndUri($event);
         });
+
+        if (class_exists(SolspacePlugin::class) && SolspacePlugin::getInstance()) {
+            Event::on(\Solspace\Calendar\Services\EventsService::class, \Solspace\Calendar\Services\EventsService::EVENT_BEFORE_DELETE, function (\Solspace\Calendar\Events\SaveElementEvent $event) {
+                Needletail::$plugin->events->onDelete($event);
+            });
+
+            Event::on(\Solspace\Calendar\Services\EventsService::class, \Solspace\Calendar\Services\EventsService::EVENT_AFTER_SAVE, function (\Solspace\Calendar\Events\SaveElementEvent $event) {
+                Needletail::$plugin->events->onSave($event);
+            });
+        }
 
 /**
  * Logging in Craft involves using one of the following methods:
