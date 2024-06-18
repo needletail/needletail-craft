@@ -201,6 +201,16 @@ class Needletail extends Plugin
             Needletail::$plugin->events->onUpdateSlugAndUri($event);
         });
 
+        if (SolspacePlugin::getInstance()) {
+            Event::on(\Solspace\Calendar\Services\EventsService::class, \Solspace\Calendar\Services\EventsService::EVENT_BEFORE_DELETE, function (\Solspace\Calendar\Events\SaveElementEvent $event) {
+                Needletail::$plugin->events->onDelete($event);
+            });
+
+            Event::on(\Solspace\Calendar\Services\EventsService::class, \Solspace\Calendar\Services\EventsService::EVENT_AFTER_SAVE, function (\Solspace\Calendar\Events\SaveElementEvent $event) {
+                Needletail::$plugin->events->onSave($event);
+            });
+        }
+
 /**
  * Logging in Craft involves using one of the following methods:
  *

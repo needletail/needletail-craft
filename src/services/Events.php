@@ -19,7 +19,7 @@ class Events extends Component
     // Public Methods
     // =========================================================================
 
-    public function onSave(ElementEvent $event)
+    public function onSave(yii\base\Event $event)
     {
         $buckets = $this->getBucketsForElement($event->element);
 
@@ -39,7 +39,7 @@ class Events extends Component
         }
     }
 
-    public function onUpdateSlugAndUri(ElementEvent $event)
+    public function onUpdateSlugAndUri(yii\base\Event $event)
     {
         $buckets = $this->getBucketsForElement($event->element);
 
@@ -59,7 +59,7 @@ class Events extends Component
         }
     }
 
-    public function onDelete(ElementEvent $event)
+    public function onDelete(yii\base\Event $event)
     {
         $buckets = $this->getBucketsForElement($event->element);
 
@@ -78,7 +78,7 @@ class Events extends Component
         }
     }
 
-    public function onRestore(ElementEvent $event)
+    public function onRestore(yii\base\Event $event)
     {
         $buckets = $this->getBucketsForElement($event->element);
 
