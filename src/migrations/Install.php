@@ -112,6 +112,8 @@ class Install extends Migration
                     'elementData' => $this->text(),
                     'fieldMapping' => $this->text(),
                     'siteId' => $this->integer(),
+                    'customMappingFile' => $this->boolean()->defaultValue(false),
+                    'mappingTwigFile' => $this->string(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
                     'uid' => $this->uid(),

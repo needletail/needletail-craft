@@ -15,8 +15,13 @@ class m240424_101421_add_twig_mapping_fields extends Migration
      */
     public function safeUp(): bool
     {
-        $this->addColumn('{{%needletail_buckets}}', 'customMappingFile', $this->boolean()->defaultValue(false)->after('siteId'));
-        $this->addColumn('{{%needletail_buckets}}', 'mappingTwigFile', $this->string()->after('customMappingFile'));
+        if (!$this->db->columnExists('{{%needletail_buckets}}', 'customMappingFile')) {
+            $this->addColumn('{{%needletail_buckets}}', 'customMappingFile', $this->boolean()->defaultValue(false)->after('siteId'));
+        }
+
+        if (!$this->db->columnExists('{{%needletail_buckets}}', 'mappingTwigFile')) {
+            $this->addColumn('{{%needletail_buckets}}', 'mappingTwigFile', $this->string()->after('customMappingFile'));
+        }
 
         return true;
     }
