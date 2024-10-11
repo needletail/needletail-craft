@@ -204,7 +204,7 @@ class Needletail extends Plugin
         });
 
         if (class_exists(SolspacePlugin::class) && SolspacePlugin::getInstance()) {
-            Event::on(\Solspace\Calendar\Services\EventsService::class, \Solspace\Calendar\Services\EventsService::EVENT_BEFORE_DELETE, function (\Solspace\Calendar\Events\SaveElementEvent $event) {
+            Event::on(\Solspace\Calendar\Services\EventsService::class, \Solspace\Calendar\Services\EventsService::EVENT_BEFORE_DELETE, function (\Solspace\Calendar\Events\DeleteElementEvent $event) {
                 Needletail::$plugin->events->onDelete($event);
             });
 
