@@ -49,6 +49,19 @@ class BucketsController extends Controller
 
         $variables['elements'] = Needletail::$plugin->elements->getRegisteredElements();
 
+        $files = [];
+        $needletailTemplates = Craft::$app->path->getSiteTemplatesPath().'/_needletail';
+
+        if (is_dir($needletailTemplates)) {
+            $dirFiles = preg_grep('/^([^.])/', scandir($needletailTemplates));
+
+            foreach ($dirFiles as $file) {
+                $files[$file] = $file;
+            }
+        }
+
+        $variables['filesList'] = $files;
+
         return $this->renderTemplate('needletail/buckets/_edit', $variables);
     }
 
@@ -136,7 +149,7 @@ class BucketsController extends Controller
             $bucket = new BucketModel();
         }
         $params = [
-            'name', 'handle', 'elementType', 'elementData', 'siteId', 'fieldMapping'
+            'name', 'handle', 'elementType', 'elementData', 'siteId', 'fieldMapping', 'customMappingFile', 'mappingTwigFile'
         ];
 
         foreach ( $params as $param )

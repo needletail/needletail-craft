@@ -89,7 +89,7 @@ class Needletail extends Plugin
      *
      * @var string
      */
-    public $schemaVersion = '1.0.0';
+    public $schemaVersion = '2.0.0';
 
     // Public Methods
     // =========================================================================

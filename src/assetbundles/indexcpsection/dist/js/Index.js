@@ -52,8 +52,24 @@ $(document).on('change', '.element-parent-group select', function() {
     }
 });
 
-$('.element-parent-group select').trigger('change');
+$('#elementType').trigger('change');
 
+// Toggle various field when changing element type
+$(document).on('click', '#customMappingFile', function(_) {
+    if ($('[name="customMappingFile"]').val() == '1') {
+        $('#custom-mapping-select').show();
+
+        $('#save-and-index').show();
+        $('#save-and-map').hide();
+    } else {
+        $('#custom-mapping-select').hide();
+
+        $('#save-and-index').hide();
+        $('#save-and-map').show();
+    }
+});
+
+$('#customMappingFile').trigger('click');
 
 // Show initially hidden element sub-fields. A little tricky because they're in a table, and all equal siblings
 $('tr:not(.element-sub-field) .col-enable .lightswitch').on('change', function(e) {

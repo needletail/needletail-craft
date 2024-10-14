@@ -126,6 +126,11 @@ class Buckets extends Component
         $record->elementType = $model->elementType;
         $record->siteId = $model->siteId;
 
+        if ($model->customMappingFile) {
+            $record->setAttribute('customMappingFile', $model->customMappingFile);
+            $record->setAttribute('mappingTwigFile', $model->mappingTwigFile);
+        }
+
         if ($model->elementData) {
             $record->setAttribute('elementData', json_encode($model->elementData));
         }
@@ -199,6 +204,8 @@ class Buckets extends Component
                 'elementType',
                 'elementData',
                 'fieldMapping',
+                'customMappingFile',
+                'mappingTwigFile',
                 'siteId',
                 'dateCreated',
                 'dateUpdated',

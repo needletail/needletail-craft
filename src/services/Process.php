@@ -7,6 +7,7 @@ use craft\base\ElementInterface;
 use craft\elements\Asset as AssetElement;
 use craft\elements\Category as CategoryElement;
 use craft\elements\Entry as EntryElement;
+use craft\helpers\Json;
 use needletail\needletail\base\ParsesSelf;
 use needletail\needletail\Needletail as Plugin;
 use craft\helpers\App;
@@ -30,11 +31,33 @@ class Process extends Component
         $query->limit($take);
         $results = $query->all();
 
-        $mappingData = $this->prepareMappingData($bucket->fieldMapping);
+        if ($bucket->customMappingFile) {
+            $results = array_map(function (ElementInterface $element) use ($bucket) {
+                if (file_exists(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile)) {
+                    $rendered = \Craft::$app->getView()->renderString(file_get_contents(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile), [
+                        'entry' => $element
+                    ]);
+                    $rendered = $this->replaceNewlineInQuotes($rendered);
+                    $array = Json::decodeIfJson($rendered);
 
-        $results = array_map(function (ElementInterface $element) use ($bucket, $mappingData) {
-            return $this->parseElement($element, $bucket, $mappingData);
-        }, $results);
+                    if (is_null($array)) {
+                        throw new \Exception('Custom mapping file is not valid JSON: '.$rendered);
+                    }
+
+                    return array_merge([
+                            'id' => (int)$element->id,
+                        ]) + $array;
+                }
+
+                throw new \Exception('Custom mapping file not found');
+            }, $results);
+        } else {
+            $mappingData = $this->prepareMappingData($bucket->fieldMapping);
+
+            $results = array_map(function (ElementInterface $element) use ($bucket, $mappingData) {
+                return $this->parseElement($element, $bucket, $mappingData);
+            }, $results);
+        }
 
         Needletail::$plugin->connection->bulk($bucket->handleWithPrefix, $results);
     }
@@ -44,9 +67,29 @@ class Process extends Component
         if ( $this->shouldNotPerformWriteActions() )
             return false;
 
-        $mappingData = $this->prepareMappingData($bucket->fieldMapping);
+        if ($bucket->customMappingFile) {
+            if (file_exists(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile)) {
+                $rendered = \Craft::$app->getView()->renderString(file_get_contents(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile), [
+                    'entry' => $element
+                ]);
+                $rendered = $this->replaceNewlineInQuotes($rendered);
+                $array = Json::decodeIfJson($rendered);
 
-        $result = $this->parseElement($element, $bucket, $mappingData);
+                if (is_null($array)) {
+                    throw new \Exception('Custom mapping file is not valid JSON: '.$rendered);
+                }
+
+                $result =  array_merge([
+                        'id' => (int)$element->id,
+                    ]) + $array;
+            } else {
+                throw new \Exception('Custom mapping file not found');
+            }
+        } else {
+            $mappingData = $this->prepareMappingData($bucket->fieldMapping);
+
+            $result = $this->parseElement($element, $bucket, $mappingData);
+        }
 
         if (\in_array($element->getStatus(), [AssetElement::STATUS_ENABLED, EntryElement::STATUS_LIVE, CategoryElement::STATUS_ENABLED])) {
             Needletail::$plugin->connection->update($bucket->handleWithPrefix, $result);
@@ -124,5 +167,11 @@ class Process extends Component
     public function nonProductionIsDisabled()
     {
         return !! Needletail::$plugin->settings->disableIndexingOnNonProduction;
+    }
+
+    function replaceNewlineInQuotes($json) {
+        return preg_replace_callback('/"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/s', function($matches) {
+            return '"' . str_replace("\n", "\\n", $matches[1]) . '"';
+        }, $json);
     }
 }
