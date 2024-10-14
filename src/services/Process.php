@@ -32,7 +32,9 @@ class Process extends Component
         $results = $query->all();
 
         if ($bucket->customMappingFile) {
-            $results = array_map(function (ElementInterface $element) use ($bucket) {
+            $mapped = [];
+
+            foreach ($results as $element) {
                 if (file_exists(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile)) {
                     $rendered = \Craft::$app->getView()->renderString(file_get_contents(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile), [
                         'entry' => $element
@@ -44,13 +46,21 @@ class Process extends Component
                         throw new \Exception('Custom mapping file is not valid JSON: '.$rendered);
                     }
 
-                    return array_merge([
-                        'id' => (int)$element->id,
-                    ], $array);
+                    if (array_keys($array) !== range(0, count($array) - 1)) { // Is assoc array
+                        $mapped[] = array_merge([
+                            'id' => (int)$element->id,
+                        ], $array);
+                    } else {
+                        foreach ($array as $item) {
+                            $mapped[] = $item;
+                        }
+                    }
+                } else {
+                    throw new \Exception('Custom mapping file not found');
                 }
+            }
 
-                throw new \Exception('Custom mapping file not found');
-            }, $results);
+            $results = $mapped;
         } else {
             $mappingData = $this->prepareMappingData($bucket->fieldMapping);
 
@@ -67,6 +77,7 @@ class Process extends Component
         if ( $this->shouldNotPerformWriteActions() )
             return false;
 
+        $isAssoc = true;
         if ($bucket->customMappingFile) {
             if (file_exists(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile)) {
                 $rendered = \Craft::$app->getView()->renderString(file_get_contents(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile), [
@@ -79,9 +90,17 @@ class Process extends Component
                     throw new \Exception('Custom mapping file is not valid JSON: '.$rendered);
                 }
 
-                $result = array_merge([
-                    'id' => (int)$element->id,
-                ], $array);
+                if (array_keys($array) !== range(0, count($array) - 1)) { // Is assoc array
+                    $result = array_merge([
+                        'id' => (int)$element->id,
+                    ], $array);
+                } else {
+                    $isAssoc = false;
+                    $result = [];
+                    foreach ($array as $item) {
+                        $result[] = $item;
+                    }
+                }
             } else {
                 throw new \Exception('Custom mapping file not found');
             }
@@ -92,18 +111,37 @@ class Process extends Component
         }
 
         if (\in_array($element->getStatus(), [AssetElement::STATUS_ENABLED, EntryElement::STATUS_LIVE, CategoryElement::STATUS_ENABLED])) {
-            Needletail::$plugin->connection->update($bucket->handleWithPrefix, $result);
+            if ($isAssoc) { // Is assoc array
+                Needletail::$plugin->connection->update($bucket->handleWithPrefix, $result);
+            } else {
+                foreach ($result as $item) {
+                    Needletail::$plugin->connection->update($bucket->handleWithPrefix, $item);
+                }
+            }
         } else {
-            Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $element->getId());
+            if ($isAssoc) { // Is assoc array
+                Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $element->getId());
+            } else {
+                foreach ($result as $item) {
+                    Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $item['id']);
+                }
+            }
         }
     }
 
-    public function deleteSingle(BucketModel $bucket, ElementInterface $element = null, $elementId = null)
+    public function deleteSingle(BucketModel $bucket, ElementInterface $element = null, $elementId = null, $variants = null)
     {
         if ( $this->shouldNotPerformWriteActions() )
             return false;
 
-        Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $elementId ?? $element->getId());
+        if (!is_null($variants)) {
+            foreach ($variants as $item) {
+                Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $item);
+            }
+        } else {
+            throw new \Exception(json_encode($variants));
+            Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $elementId ?? $element->getId());
+        }
     }
 
     public function afterProcess()

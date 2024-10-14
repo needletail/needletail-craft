@@ -66,14 +66,23 @@ class Events extends Component
         if (!count($buckets) )
             return;
 
+        $variants = null;
+
+        if (method_exists($event->element, 'getVariants')) {
+            $variants = array_map(function ($variant) {
+                return $variant->id;
+            }, $event->element->getVariants());
+        }
+
         foreach ($buckets as $bucket) {
             if ( Needletail::$plugin->getSettings()->processSingleElementsViaQueue ){
                 \Craft::$app->getQueue()->delay(0)->push(new DeleteElement([
                     'bucket' => $bucket,
-                    'elementId' => $event->element->getId()
+                    'elementId' => $event->element->getId(),
+                    'variants' => $variants,
                 ]));
             } else {
-                Needletail::$plugin->process->deleteSingle($bucket, $event->element);
+                Needletail::$plugin->process->deleteSingle($bucket, $event->element, null, $variants);
             }
         }
     }

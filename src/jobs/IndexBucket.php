@@ -31,7 +31,7 @@ class IndexBucket extends BaseJob
     {
         $query = $this->bucket->getElement()->getQuery($this->bucket, []);
         $elementCount = $query->count();
-        $stepSize = 250;
+        $stepSize = 1;
 
         if ( $elementCount == 0 )
             return;

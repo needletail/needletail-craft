@@ -24,12 +24,14 @@ class DeleteElement extends BaseJob
      */
     public $elementId;
 
+    public $variants;
+
     // Public Methods
     // =========================================================================
 
     public function execute($queue)
     {
-        Needletail::$plugin->process->deleteSingle($this->bucket, null, $this->elementId);
+        Needletail::$plugin->process->deleteSingle($this->bucket, null, $this->elementId, $this->variants);
         $this->setProgress($queue, 100);
 
         return true;
