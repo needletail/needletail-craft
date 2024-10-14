@@ -40,7 +40,7 @@ class Process extends Component
                     $rendered = $this->replaceNewlineInQuotes($rendered);
                     $array = Json::decodeIfJson($rendered);
 
-                    if (is_null($array)) {
+                    if (!is_array($array)) {
                         throw new \Exception('Custom mapping file is not valid JSON: '.$rendered);
                     }
 
@@ -75,7 +75,7 @@ class Process extends Component
                 $rendered = $this->replaceNewlineInQuotes($rendered);
                 $array = Json::decodeIfJson($rendered);
 
-                if (is_null($array)) {
+                if (!is_array($array)) {
                     throw new \Exception('Custom mapping file is not valid JSON: '.$rendered);
                 }
 
