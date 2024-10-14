@@ -45,8 +45,8 @@ class Process extends Component
                     }
 
                     return array_merge([
-                            'id' => (int)$element->id,
-                        ]) + $array;
+                        'id' => (int)$element->id,
+                    ], $array);
                 }
 
                 throw new \Exception('Custom mapping file not found');
@@ -79,9 +79,9 @@ class Process extends Component
                     throw new \Exception('Custom mapping file is not valid JSON: '.$rendered);
                 }
 
-                $result =  array_merge([
-                        'id' => (int)$element->id,
-                    ]) + $array;
+                $result = array_merge([
+                    'id' => (int)$element->id,
+                ], $array);
             } else {
                 throw new \Exception('Custom mapping file not found');
             }
