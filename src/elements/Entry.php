@@ -38,7 +38,7 @@ class Entry extends Element implements ElementInterface
     public function getGroups()
     {
         // Get editable sections for user
-        $editable = Craft::$app->sections->getEditableSections();
+        $editable = Craft::$app->getEntries()->getEditableSections();
 
         // Get sections but not singles
         $sections = [];
