@@ -60,6 +60,20 @@ class Process extends Component
             }, $results);
         }
 
+        // Only keep $results where there is data other than just 'id' (filter when only id is available)
+        $results = array_filter($results, function ($result) {
+            if (!is_array($result)) {
+                return false;
+            }
+            // If the only key present is 'id', filter it out
+            $keys = array_keys($result);
+            return count($keys) > 1 || (count($keys) == 1 && $keys[0] !== 'id');
+        });
+
+        if (empty($results)) {
+            return;
+        }
+
         Needletail::$plugin->connection->bulk($bucket->handleWithPrefix, $results);
     }
 
@@ -91,6 +105,11 @@ class Process extends Component
             $mappingData = $this->prepareMappingData($bucket->fieldMapping);
 
             $result = $this->parseElement($element, $bucket, $mappingData);
+        }
+
+        // If result only contains 'id', return early
+        if (is_array($result) && count($result) === 1 && array_key_exists('id', $result)) {
+            return;
         }
 
         if (\in_array($element->getStatus(), [AssetElement::STATUS_ENABLED, EntryElement::STATUS_LIVE, CategoryElement::STATUS_ENABLED])) {
