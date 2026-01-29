@@ -14,7 +14,6 @@ use craft\events\ElementEvent;
 use needletail\needletail\models\NeedletailModel;
 use needletail\needletail\services\Buckets;
 use needletail\needletail\services\Connection;
-use needletail\needletail\services\DataTypes;
 use needletail\needletail\services\Elements;
 use needletail\needletail\services\Events;
 use needletail\needletail\services\Fields;

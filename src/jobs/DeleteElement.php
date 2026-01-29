@@ -3,11 +3,9 @@
 namespace needletail\needletail\jobs;
 
 use Craft;
-use craft\base\ElementInterface;
 use craft\queue\BaseJob;
 use needletail\needletail\models\BucketModel;
 use needletail\needletail\Needletail;
-use yii\base\Exception;
 
 class DeleteElement extends BaseJob
 {
@@ -20,7 +18,7 @@ class DeleteElement extends BaseJob
     public $bucket;
 
     /**
-     * @var $elementId
+     * @var int
      */
     public $elementId;
 

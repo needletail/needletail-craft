@@ -2,6 +2,8 @@
 namespace needletail\needletail\services;
 
 use craft\base\ElementInterface;
+use craft\errors\MissingComponentException;
+use needletail\needletail\base\MissingDataType;
 use needletail\needletail\events\RegisterNeedletailFieldsEvent;
 use needletail\needletail\fields\Assets;
 use needletail\needletail\fields\Categories;
@@ -12,7 +14,6 @@ use needletail\needletail\fields\Dropdown;
 use needletail\needletail\fields\Entries;
 use needletail\needletail\fields\FieldInterface;
 use needletail\needletail\fields\Lightswitch;
-use needletail\needletail\fields\Matrix;
 use needletail\needletail\fields\Number;
 use needletail\needletail\fields\RadioButtons;
 use needletail\needletail\fields\Redactor;
@@ -39,7 +40,6 @@ class Fields extends Component
     // =========================================================================
 
     private $_fields = [];
-    private $_fieldsByHandle = [];
 
 
     // Public Methods
@@ -49,22 +49,16 @@ class Fields extends Component
     {
         parent::init();
 
-        // Load all fieldtypes once, used for later
-        // foreach (Craft::$app->fields->getAllFields() as $field) {
-        //     $this->_fieldsByHandle[$field->handle][] = $field;
-        // }
-
         foreach ($this->getRegisteredFields() as $fieldClass) {
             $field = $this->createField($fieldClass);
 
             // Does this field exist in Craft right now?
-            if (!class_exists($field::$class)) {
+            $fieldClassName = $field->getFieldClass();
+            if (!$fieldClassName || !class_exists($fieldClassName)) {
                 continue;
             }
 
-            $handle = $field::$class;
-
-            $this->_fields[$handle] = $field;
+            $this->_fields[$fieldClassName] = $field;
         }
     }
 
@@ -82,7 +76,7 @@ class Fields extends Component
         $list = [];
 
         foreach ($this->_fields as $handle => $field) {
-            $list[$handle] = $field::$name;
+            $list[$handle] = $field->getName();
         }
 
         return $list;
@@ -118,7 +112,7 @@ class Fields extends Component
         return $event->fields;
     }
 
-    public function createField($config)
+    public function createField($config): FieldInterface
     {
         if (is_string($config)) {
             $config = ['type' => $config];

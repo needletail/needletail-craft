@@ -6,8 +6,6 @@ use craft\fields\data\ColorData;
 use craft\fields\data\MultiOptionsFieldData;
 use craft\fields\data\OptionData;
 use craft\fields\data\SingleOptionFieldData;
-use craft\redactor\FieldData;
-use Solspace\Freeform\Library\Composer\Components\Fields\DataContainers\Option;
 
 class DefaultField extends Field implements FieldInterface
 {
@@ -43,7 +41,6 @@ class DefaultField extends Field implements FieldInterface
 
         $stringableInstances = [
             ColorData::class,
-            FieldData::class,
         ];
 
         foreach ( $stringableInstances as $stringableInstace ) {
@@ -51,30 +48,22 @@ class DefaultField extends Field implements FieldInterface
                 return (string) $value;
         }
 
-
-        $multiOptionDataInstance = [
-            MultiOptionsFieldData::class,
-        ];
-
-
-        foreach ( $multiOptionDataInstance as $optionDataInstance )
-        {
-            if ( $value instanceof $optionDataInstance )
-                return array_map(function ($item) {
-                    if ( $item instanceof OptionData )
-                        return $item->label;
-                    return $item;
-                }, (array) $value);
+        if (is_object($value) && method_exists($value, '__toString')) {
+            return (string)$value;
         }
 
-        $singleOptionDataInstances = [
-            SingleOptionFieldData::class,
-        ];
 
-        foreach ( $singleOptionDataInstances as $optionDataInstance )
-        {
-            if ( $value instanceof $optionDataInstance )
-                return $value->label;
+        if ($value instanceof MultiOptionsFieldData) {
+            return array_map(function ($item) {
+                if ($item instanceof OptionData) {
+                    return $item->label;
+                }
+                return $item;
+            }, (array)$value);
+        }
+
+        if ($value instanceof SingleOptionFieldData) {
+            return $value->label;
         }
 
         return $value;

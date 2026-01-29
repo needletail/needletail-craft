@@ -13,6 +13,7 @@ use needletail\needletail\Needletail as Plugin;
 use craft\helpers\App;
 use needletail\needletail\models\BucketModel;
 use needletail\needletail\Needletail;
+use craft\elements\db\ElementQueryInterface;
 
 class Process extends Component
 {
@@ -27,9 +28,25 @@ class Process extends Component
             return false;
 
         $query = $bucket->element->getQuery($bucket, []);
-        $query->offset($offset);
-        $query->limit($take);
-        $results = $query->all();
+
+        $this->processBatchQuery($bucket, $query, $take, $offset);
+    }
+
+    public function processBatchQuery(BucketModel $bucket, ElementQueryInterface $query, int $take, int $offset): void
+    {
+        if ($this->shouldNotPerformWriteActions()) {
+            return;
+        }
+
+        $batchQuery = clone $query;
+        $batchQuery->offset($offset);
+        $batchQuery->limit($take);
+        $results = $batchQuery->all();
+
+        // Only index publicly visible elements with a non-empty URL.
+        $results = array_values(array_filter($results, function (ElementInterface $element) use ($bucket) {
+            return (bool)$bucket->element->shouldIndexElement($bucket, $element);
+        }));
 
         if ($bucket->customMappingFile) {
             $results = array_map(function (ElementInterface $element) use ($bucket) {
@@ -82,6 +99,13 @@ class Process extends Component
         if ( $this->shouldNotPerformWriteActions() )
             return false;
 
+        $shouldIndex = (bool)$bucket->element->shouldIndexElement($bucket, $element);
+
+        if (!$shouldIndex) {
+            Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $element->getId());
+            return;
+        }
+
         if ($bucket->customMappingFile) {
             if (file_exists(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile)) {
                 $rendered = \Craft::$app->getView()->renderString(file_get_contents(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile), [
@@ -112,14 +136,10 @@ class Process extends Component
             return;
         }
 
-        if (\in_array($element->getStatus(), [AssetElement::STATUS_ENABLED, EntryElement::STATUS_LIVE, CategoryElement::STATUS_ENABLED])) {
-            Needletail::$plugin->connection->update($bucket->handleWithPrefix, $result);
-        } else {
-            Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $element->getId());
-        }
+        Needletail::$plugin->connection->update($bucket->handleWithPrefix, $result);
     }
 
-    public function deleteSingle(BucketModel $bucket, ElementInterface $element = null, $elementId = null)
+    public function deleteSingle(BucketModel $bucket, ?ElementInterface $element = null, ?int $elementId = null)
     {
         if ( $this->shouldNotPerformWriteActions() )
             return false;

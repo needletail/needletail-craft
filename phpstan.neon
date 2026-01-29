@@ -1,0 +1,33 @@
+parameters:
+    level: 5
+
+    paths:
+        - src
+
+    excludePaths:
+        - src/assetbundles/*/dist
+
+    bootstrapFiles:
+        - vendor/autoload.php
+        # Yii's global `Yii` class is loaded by Craft's bootstrap in real projects.
+        - vendor/yiisoft/yii2/Yii.php
+        # Craft's global `Craft` class isn't registered by Composer autoload; include it explicitly.
+        - vendor/craftcms/cms/src/Craft.php
+
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
+
+    ignoreErrors:
+        # Optional Craft plugins (not required by this package)
+        - '#craft\\commerce\\#'
+        - '#Solspace\\Calendar\\#'
+        - '#craft\\feedme\\#'
+        - '#Cake\\#'
+
+        # Craft/Yii dynamic service access (Craft::$app is more specific than yii\\base\\Application)
+        - '#yii\\(console|web)\\Application#'
+        - '#yii\\(console|web)\\Request#'
+        - '#yii\\base\\View::#'
+        - '#yii\\web\\Session::set(Notice|Error)#'
+        - '#yii\\web\\UrlManager::setRouteParams#'
+

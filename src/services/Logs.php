@@ -34,7 +34,7 @@ class Logs extends Component
     {
         $dateTime = new \DateTime();
         $type = explode('::', $method)[1];
-        $message = Craft::t('feed-me', $message, $params);
+        $message = Craft::t('needletail', $message, $params);
 
         $options = array_merge([
             'date' => $dateTime->format('Y-m-d H:i:s'),

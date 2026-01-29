@@ -6,11 +6,13 @@ use craft\base\Component;
 use craft\errors\MissingComponentException;
 use craft\helpers\Component as ComponentHelper;
 use needletail\needletail\base\ElementInterface;
+use needletail\needletail\base\MissingDataType;
 use needletail\needletail\elements\Asset;
 use needletail\needletail\elements\CalendarEvent;
 use needletail\needletail\elements\Category;
 use needletail\needletail\elements\CommerceProduct;
 use needletail\needletail\elements\Entry;
+use needletail\needletail\elements\UrlResources;
 use needletail\needletail\events\RegisterNeedletailElementsEvent;
 
 
@@ -37,13 +39,12 @@ class Elements extends Component
             $element = $this->createElement($elementClass);
 
             // Does this element exist in Craft right now?
-            if (!class_exists($element::$class)) {
+            $elementClassName = $element->getElementClass();
+            if (!$elementClassName || !class_exists($elementClassName)) {
                 continue;
             }
 
-            $handle = $element::$class;
-
-            $this->_elements[$handle] = $element;
+            $this->_elements[$elementClassName] = $element;
         }
     }
 
@@ -57,7 +58,7 @@ class Elements extends Component
     public function elementsList()
     {
         return array_map(function ($element) {
-            return $element::$name;
+            return $element->getName();
         }, $this->_elements);
     }
 
@@ -68,6 +69,7 @@ class Elements extends Component
         }
 
         $elements = [
+            UrlResources::class,
             Asset::class,
             Category::class,
             CommerceProduct::class,
@@ -84,7 +86,7 @@ class Elements extends Component
         return $event->elements;
     }
 
-    public function createElement($config)
+    public function createElement($config): ElementInterface
     {
         if (is_string($config)) {
             $config = ['type' => $config];

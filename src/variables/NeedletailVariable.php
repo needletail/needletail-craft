@@ -10,6 +10,7 @@
 
 namespace needletail\needletail\variables;
 
+use craft\elements\User as UserElement;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\UrlHelper;
 use needletail\needletail\Needletail;

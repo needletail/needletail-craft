@@ -159,7 +159,7 @@ class Install extends Migration
     protected function addForeignKeys()
     {
         $this->addForeignKey(
-            $this->db->getForeignKeyName(BucketRecord::tableName(), 'siteId'),
+            $this->db->getForeignKeyName(),
             BucketRecord::tableName(),
             'siteId',
             '{{%sites}}',

@@ -1,10 +1,10 @@
 # Needletail plugin for Craft CMS
 
-Needletail Search and Index package for Craft 3.x
+Needletail Search and Index plugin for Craft CMS.
 
 ## Requirements
 
-This plugin requires Craft CMS 3 or 4
+This plugin requires **Craft CMS 5.x**.
 
 ## Installation
 
@@ -19,8 +19,22 @@ To install the plugin, follow these instructions.
         composer require needletail/needletail-craft
 
 3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Needletail.
-4. 
+
 Brought to you by [Needletail](https://needletail.io)
+
+## Buckets
+
+Buckets define **what gets indexed** into Needletail.
+
+- You can create buckets for a specific element type (Entries, Categories, Assets, etc.).
+- You can also create a bucket with element type **All URL resources**, which is designed to index **everything with a URL** in your system (including Assets), and optionally additional element types added by other plugins that support URIs.
+
+### All URL resources bucket
+
+When you select **All URL resources**, Needletail will index **publicly visible** elements only:
+
+- Elements must have a **non-empty URL**
+- Elements must be **public** (e.g. Live/Enabled)
 
 ## Custom Twig file
 

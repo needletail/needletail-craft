@@ -62,9 +62,9 @@ class Settings extends Model
     public $processSingleElementsViaQueue = true;
 
     /**
-     * Prefix bucket names
+     * Disable indexing on non-production environments.
      *
-     * @var string
+     * @var bool
      */
     public $disableIndexingOnNonProduction = false;
 

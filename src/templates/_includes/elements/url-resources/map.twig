@@ -1,0 +1,58 @@
+{% set fields = [{
+    name: 'Title',
+    handle: 'title',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Slug',
+    handle: 'slug',
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'URL',
+    handle: 'url',
+    instructions: 'The element URL (if available).'|t('needletail'),
+    default: {
+        type: 'text',
+    },
+}, {
+    name: 'Element Type',
+    handle: 'elementType',
+    instructions: 'The element’s class name (useful when indexing mixed content).'|t('needletail'),
+    default: {
+        type: 'text',
+    },
+}, {
+    type: 'date',
+    name: 'Date Updated',
+    handle: 'dateUpdated',
+    default: {
+        type: 'dateTime',
+    },
+}, {
+    name: 'Filename',
+    handle: 'filename',
+    instructions: 'Only applies to assets.'|t('needletail'),
+    default: {
+        type: 'text',
+    },
+}] %}
+
+<h2>{{ 'URL Resource Fields'|t('needletail') }}</h2>
+
+<table class="needletail-mapping data fullwidth collapsible">
+    <thead>
+    <th style="width: 45%">{{ 'Field'|t('needletail') }}</th>
+    <th>{{ 'Enabled'|t('needletail') }}</th>
+    <th style="width: 45%">{{ 'Default Value'|t('needletail') }}</th>
+    </thead>
+    <tbody>
+    {% for field in fields %}
+        {% set variables = field | merge({ bucket: bucket, attribute: true }) %}
+        {% include 'needletail/_includes/fields/default' with variables only %}
+    {% endfor %}
+    </tbody>
+</table>
+

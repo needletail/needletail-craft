@@ -2,14 +2,9 @@
 
 namespace needletail\needletail\elements;
 
-use Cake\Utility\Hash;
 use Craft;
-use craft\commerce\elements\Product;
 use craft\commerce\elements\Product as ProductElement;
-use craft\commerce\elements\Variant as VariantElement;
 use craft\commerce\Plugin as Commerce;
-use craft\feedme\helpers\DataHelper;
-use craft\feedme\Plugin;
 use craft\helpers\StringHelper;
 use needletail\needletail\base\Element;
 use needletail\needletail\base\ElementInterface;
@@ -39,11 +34,6 @@ class CommerceProduct extends Element implements ElementInterface, ParsesSelf
      * @var string
      */
     public static $class = 'craft\commerce\elements\Product';
-
-    /**
-     * @var
-     */
-    public $element;
 
 
     // Templates
@@ -95,7 +85,7 @@ class CommerceProduct extends Element implements ElementInterface, ParsesSelf
 
     public function parseElement(\craft\base\ElementInterface $element, BucketModel $bucket, $mappingData)
     {
-        /** @var Product $element */
+        /** @var ProductElement $element */
 
         $fieldData = [];
 

@@ -19,7 +19,7 @@ class Events extends Component
     // Public Methods
     // =========================================================================
 
-    public function onSave(\yii\base\Event $event)
+    public function onSave(ElementEvent $event)
     {
         $buckets = $this->getBucketsForElement($event->element);
 
@@ -39,7 +39,7 @@ class Events extends Component
         }
     }
 
-    public function onUpdateSlugAndUri(\yii\base\Event $event)
+    public function onUpdateSlugAndUri(ElementEvent $event)
     {
         $buckets = $this->getBucketsForElement($event->element);
 
@@ -59,7 +59,7 @@ class Events extends Component
         }
     }
 
-    public function onDelete(\yii\base\Event $event)
+    public function onDelete(ElementEvent $event)
     {
         $buckets = $this->getBucketsForElement($event->element);
 
@@ -78,7 +78,7 @@ class Events extends Component
         }
     }
 
-    public function onRestore(\yii\base\Event $event)
+    public function onRestore(ElementEvent $event)
     {
         $buckets = $this->getBucketsForElement($event->element);
 
@@ -117,25 +117,23 @@ class Events extends Component
 
         $this->_buckets = Needletail::$plugin->buckets->getCached();
 
-        if (!$this->pluginHandlesThisTypeOfElement(get_class($element)))
-            return false;
-
-        return true;
-    }
-
-    private function pluginHandlesThisTypeOfElement($elementClass)
-    {
-        $filtered = array_filter($this->_buckets, function (BucketModel $model) use ($elementClass) {
-            return $model->elementType === $elementClass;
-        });
-
-        return count($filtered) > 0;
+        return count($this->_buckets) > 0;
     }
 
     private function getAllBucketsForElement(\craft\base\ElementInterface $element)
     {
         return array_filter($this->_buckets, function (BucketModel $bucketModel) use ($element) {
-            return count($bucketModel->element->getQuery($bucketModel, ['id' => $element->id])->all()) !== 0;
+            $elementHandler = $bucketModel->element;
+
+            if (!$elementHandler || !method_exists($elementHandler, 'includesElement')) {
+                return false;
+            }
+
+            try {
+                return (bool)$elementHandler->includesElement($bucketModel, $element);
+            } catch (\Throwable $e) {
+                return false;
+            }
         });
     }
 }

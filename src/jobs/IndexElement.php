@@ -18,12 +18,12 @@ class IndexElement extends BaseJob
     public $bucket;
 
     /**
-     * @var $elementId
+     * @var int
      */
     public $elementId;
 
     /**
-     * @var $siteId
+     * @var int
      */
     public $siteId;
 

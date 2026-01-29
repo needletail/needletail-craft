@@ -3,6 +3,7 @@
 namespace needletail\needletail\services;
 
 use Closure;
+use ArrayAccess;
 use craft\base\Component;
 
 class Hash extends Component

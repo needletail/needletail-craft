@@ -11,6 +11,25 @@ use needletail\needletail\Needletail;
 
 abstract class Field extends Component
 {
+    /**
+     * @var string
+     */
+    public static $name = '';
+
+    /**
+     * The Craft field class this wrapper targets.
+     *
+     * @var string
+     */
+    public static $class = '';
+
+    /**
+     * The Craft element class this field targets (when relevant).
+     *
+     * @var string
+     */
+    public static $elementType = '';
+
     public $data;
 
     /**
@@ -78,9 +97,8 @@ abstract class Field extends Component
 
 
         $fieldMapping = Plugin::$plugin->process->prepareMappingData($fieldMapping['fields'] ?? []);
-        $element = Needletail::$plugin->elements->getRegisteredElement($this->elementType);
 
-        return array_map(function (ElementInterface $el) use ($fieldMapping, $element) {
+        return array_map(function (ElementInterface $el) use ($fieldMapping) {
             $fieldData = [];
             $newNestingLevel = $this->nestingLevel + 1;
 

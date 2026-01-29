@@ -203,9 +203,8 @@ class NeedletailWidget extends Widget
     /**
      * Returns the widget's body HTML.
      *
-     * @return string|false The widget’s body HTML, or `false` if the widget
-     *                      should not be visible. (If you don’t want the widget
-     *                      to be selectable in the first place, use {@link isSelectable()}.)
+     * @return string|null The widget’s body HTML, or `null` if the widget
+     *                     should not be visible.
      */
     public function getBodyHtml(): ?string
     {

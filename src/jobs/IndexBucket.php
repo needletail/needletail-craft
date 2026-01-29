@@ -6,7 +6,6 @@ use Craft;
 use craft\queue\BaseJob;
 use needletail\needletail\models\BucketModel;
 use needletail\needletail\Needletail;
-use yii\base\Exception;
 
 class IndexBucket extends BaseJob
 {
@@ -29,18 +28,48 @@ class IndexBucket extends BaseJob
 
     public function execute($queue): void
     {
-        $query = $this->bucket->getElement()->getQuery($this->bucket, []);
-        $elementCount = $query->count();
-        $stepSize = 1;
-
-        if ( $elementCount == 0 )
+        $element = $this->bucket->getElement();
+        if (!$element) {
             return;
+        }
 
-        $steps = ceil($elementCount / $stepSize);
+        $stepSize = 100;
 
-        for($i=0;$i<$steps;$i++) {
-            Needletail::$plugin->process->processBatch($this->bucket, $stepSize, $i * $stepSize);
-            $this->setProgress($queue, ($i+1) / $steps);
+        $queries = $element->getQueries($this->bucket, []);
+
+        // Remove null/empty values (and ensure numeric keys)
+        $queries = array_values(array_filter($queries));
+
+        $counts = [];
+        $totalCount = 0;
+
+        foreach ($queries as $index => $query) {
+            $count = (int)(clone $query)->count();
+            $counts[$index] = $count;
+            $totalCount += $count;
+        }
+
+        if ($totalCount === 0) {
+            return;
+        }
+
+        $processed = 0;
+
+        foreach ($queries as $index => $query) {
+            $count = $counts[$index] ?? 0;
+
+            if ($count === 0) {
+                continue;
+            }
+
+            $steps = (int)ceil($count / $stepSize);
+
+            for ($i = 0; $i < $steps; $i++) {
+                Needletail::$plugin->process->processBatchQuery($this->bucket, $query, $stepSize, $i * $stepSize);
+
+                $processed += min($stepSize, $count - ($i * $stepSize));
+                $this->setProgress($queue, min($processed / $totalCount, 1));
+            }
         }
     }
 

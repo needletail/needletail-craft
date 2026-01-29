@@ -1,0 +1,61 @@
+{% import '_includes/forms' as forms %}
+
+{% set config = bucket.elementData[elementType] ?? {} %}
+
+{% set includeEntries = config.entries ?? true %}
+{% set includeCategories = config.categories ?? true %}
+{% set includeAssets = config.assets ?? true %}
+{% set includeCommerceProducts = config.commerceProducts ?? true %}
+{% set includeCalendarEvents = config.calendarEvents ?? true %}
+{% set includeOtherUris = config.otherUris ?? true %}
+
+<p class="light">
+    {{ 'Choose which URL-bearing resources should be included in this bucket. Only publicly visible items with a non-empty URL will be indexed.'|t('needletail') }}
+</p>
+
+{{ forms.lightswitchField({
+    label: 'Entries'|t('needletail'),
+    instructions: 'Include live entries that have a URL.'|t('needletail'),
+    name: 'elementData[' ~ elementType ~ '][entries]',
+    on: includeEntries,
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Categories'|t('needletail'),
+    instructions: 'Include enabled categories that have a URL.'|t('needletail'),
+    name: 'elementData[' ~ elementType ~ '][categories]',
+    on: includeCategories,
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Assets'|t('needletail'),
+    instructions: 'Include enabled assets that have a URL (volumes without URLs will naturally be skipped).'|t('needletail'),
+    name: 'elementData[' ~ elementType ~ '][assets]',
+    on: includeAssets,
+}) }}
+
+{% if hasCommerce %}
+    {{ forms.lightswitchField({
+        label: 'Commerce Products'|t('needletail'),
+        instructions: 'Include publicly visible products that have a URL.'|t('needletail'),
+        name: 'elementData[' ~ elementType ~ '][commerceProducts]',
+        on: includeCommerceProducts,
+    }) }}
+{% endif %}
+
+{% if hasCalendar %}
+    {{ forms.lightswitchField({
+        label: 'Calendar Events'|t('needletail'),
+        instructions: 'Include publicly visible events that have a URL.'|t('needletail'),
+        name: 'elementData[' ~ elementType ~ '][calendarEvents]',
+        on: includeCalendarEvents,
+    }) }}
+{% endif %}
+
+{{ forms.lightswitchField({
+    label: 'Other element types with URIs'|t('needletail'),
+    instructions: 'Include additional element types added by other plugins that support URIs/URLs.'|t('needletail'),
+    name: 'elementData[' ~ elementType ~ '][otherUris]',
+    on: includeOtherUris,
+}) }}
+

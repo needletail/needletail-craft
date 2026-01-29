@@ -126,17 +126,12 @@ class Buckets extends Component
         $record->elementType = $model->elementType;
         $record->siteId = $model->siteId;
 
-        if ($model->customMappingFile) {
-            $record->setAttribute('customMappingFile', $model->customMappingFile);
-            $record->setAttribute('mappingTwigFile', $model->mappingTwigFile);
-        }
+        // Persist these settings even when "false"/empty, so they can be toggled off/cleared.
+        $record->setAttribute('customMappingFile', (bool)$model->customMappingFile);
+        $record->setAttribute('mappingTwigFile', $model->mappingTwigFile ?: null);
 
-        if ($model->elementData) {
-            $record->setAttribute('elementData', json_encode($model->elementData));
-        }
-        if ($model->fieldMapping) {
-            $record->setAttribute('fieldMapping', json_encode($model->fieldMapping));
-        }
+        $record->setAttribute('elementData', $model->elementData !== null ? json_encode($model->elementData) : null);
+        $record->setAttribute('fieldMapping', $model->fieldMapping !== null ? json_encode($model->fieldMapping) : null);
 
         if ($runValidation && !$record->validate()) {
             Craft::info('Bucket not saved due to validation error.', __METHOD__);
@@ -213,7 +208,7 @@ class Buckets extends Component
     }
 
 
-    private function _createModelFromRecord(BucketRecord $record = null)
+    private function _createModelFromRecord(?BucketRecord $record = null)
     {
         if (!$record) {
             return null;

@@ -27,9 +27,8 @@ class Redactor extends Field implements FieldInterface
     public function parseField()
     {
         $data = $this->element->getFieldValue($this->fieldHandle);
-        if ( is_object($data) && get_class($data) === 'craft\redactor\FieldData') {
-            /** @var craft\redactor\FieldData $data */
-            return strip_tags($data->getParsedContent());
+        if (is_object($data) && method_exists($data, 'getParsedContent')) {
+            return strip_tags((string)$data->getParsedContent());
         }
         return $data;
     }

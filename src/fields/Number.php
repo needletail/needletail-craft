@@ -2,8 +2,6 @@
 
 namespace needletail\needletail\fields;
 
-use craft\helpers\Localization;
-
 class Number extends Field implements FieldInterface
 {
     // Properties
@@ -32,7 +30,10 @@ class Number extends Field implements FieldInterface
         if ( $value === NULL || $value === FALSE)
             return $value;
 
-        if ( $decimals = $this->field->decimals )
+        /** @var \craft\fields\Number $field */
+        $field = $this->field;
+
+        if ( $decimals = $field->decimals )
             return number_format($value, $decimals, '.', '');
 
         return floatval($value);

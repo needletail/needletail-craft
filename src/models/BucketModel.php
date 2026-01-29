@@ -2,6 +2,7 @@
 
 namespace needletail\needletail\models;
 
+use Craft;
 use craft\base\Model;
 use craft\helpers\Json as JsonHelper;
 use needletail\needletail\base\ElementInterface;

@@ -47,7 +47,10 @@ class BucketsController extends Controller
             $variables['bucket'] = new BucketModel();
         }
 
-        $variables['elements'] = Needletail::$plugin->elements->getRegisteredElements();
+        $elements = Needletail::$plugin->elements->getRegisteredElements();
+        $variables['elements'] = $elements;
+        $variables['hasCommerce'] = isset($elements['craft\commerce\elements\Product']);
+        $variables['hasCalendar'] = isset($elements['Solspace\Calendar\Elements\Event']);
 
         $files = [];
         $needletailTemplates = Craft::$app->path->getSiteTemplatesPath().'/_needletail';
@@ -152,10 +155,13 @@ class BucketsController extends Controller
             'name', 'handle', 'elementType', 'elementData', 'siteId', 'fieldMapping', 'customMappingFile', 'mappingTwigFile'
         ];
 
-        foreach ( $params as $param )
-        {
-            if ( $fromRequest = $request->getBodyParam($param) )
+        foreach ($params as $param) {
+            $fromRequest = $request->getBodyParam($param);
+
+            // Important: allow empty/false values to be assigned, so settings can be cleared/toggled off.
+            if ($fromRequest !== null) {
                 $bucket->{$param} = $fromRequest;
+            }
         }
 
         return $bucket;

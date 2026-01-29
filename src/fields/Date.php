@@ -30,9 +30,13 @@ class Date extends Field implements FieldInterface
         $value = $this->element->getFieldValue($this->fieldHandle);
         if ( ! $value )
             return null;
-        if ( $this->field->showDate && ! $this->field->showTime ) {
+
+        /** @var \craft\fields\Date $field */
+        $field = $this->field;
+
+        if ( $field->showDate && ! $field->showTime ) {
             return $value->format('Y-m-d');
-        } elseif ( ! $this->field->showDate && $this->field->showTime ) {
+        } elseif ( ! $field->showDate && $field->showTime ) {
             return $value->format('H:i:s');
         } else {
             return $value->format('Y-m-d H:i:s');
