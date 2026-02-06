@@ -111,6 +111,12 @@ class Needletail extends Plugin
         parent::init();
         self::$plugin = $this;
 
+        // Craft 5 compatibility: the old "sections" service has been replaced by the Entries service.
+        // Provide an alias so any legacy templates/code referencing `craft.app.sections` keeps working.
+        if (!Craft::$app->has('sections')) {
+            Craft::$app->set('sections', Craft::$app->getEntries());
+        }
+
         // Add in our Twig extensions
         Craft::$app->view->registerTwigExtension(new NeedletailTwigExtension());
 

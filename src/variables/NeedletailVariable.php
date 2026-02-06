@@ -124,7 +124,7 @@ class NeedletailVariable extends ServiceLocator
             $section = $this->getEntrySourcesByField($field)[0] ?? null;
 
             if ($section) {
-                $source = Craft::$app->sections->getEntryTypeById($section->id);
+                $source = Craft::$app->entries->getEntryTypeById($section->id);
             }
         } else if ($type === 'craft\fields\Tags') {
             $source = $this->getCategorySourcesByField($field) ?? null;
@@ -197,7 +197,7 @@ class NeedletailVariable extends ServiceLocator
         if (is_array($field->sources)) {
             foreach ($field->sources as $source) {
                 if ($source == 'singles') {
-                    foreach (Craft::$app->sections->getAllSections() as $section) {
+                    foreach (Craft::$app->entries->getAllSections() as $section) {
                         if ($section->type == 'single') {
                             $sources[] = $section;
                         }
@@ -205,11 +205,11 @@ class NeedletailVariable extends ServiceLocator
                 } else {
                     list($type, $uid) = explode(':', $source);
 
-                    $sources[] = Craft::$app->sections->getSectionByUid($uid);
+                    $sources[] = Craft::$app->entries->getSectionByUid($uid);
                 }
             }
         } else if ($field->sources === '*') {
-            $sources = Craft::$app->sections->getAllSections();
+            $sources = Craft::$app->entries->getAllSections();
         }
 
         return $sources;
