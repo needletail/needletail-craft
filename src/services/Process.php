@@ -43,11 +43,6 @@ class Process extends Component
         $batchQuery->limit($take);
         $results = $batchQuery->all();
 
-        // Only index publicly visible elements with a non-empty URL.
-        $results = array_values(array_filter($results, function (ElementInterface $element) use ($bucket) {
-            return (bool)$bucket->element->shouldIndexElement($bucket, $element);
-        }));
-
         if ($bucket->customMappingFile) {
             $results = array_map(function (ElementInterface $element) use ($bucket) {
                 if (file_exists(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile)) {
@@ -96,14 +91,8 @@ class Process extends Component
 
     public function processSingle(BucketModel $bucket, ElementInterface $element)
     {
-        if ( $this->shouldNotPerformWriteActions() )
+        if ( $this->shouldNotPerformWriteActions() ) {
             return false;
-
-        $shouldIndex = (bool)$bucket->element->shouldIndexElement($bucket, $element);
-
-        if (!$shouldIndex) {
-            Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $element->getId());
-            return;
         }
 
         if ($bucket->customMappingFile) {
