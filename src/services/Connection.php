@@ -76,6 +76,17 @@ class Connection extends Component
         return $this->getWriteClient()->documents()->bulk($name)->create($params);
     }
 
+    /**
+     * Remove all documents from a bucket.
+     *
+     * @param string $name
+     * @return string
+     */
+    public function truncateBucket($name)
+    {
+        return $this->getWriteClient()->buckets()->truncate($name);
+    }
+
     public function update($name, $data)
     {
         return $this->getWriteClient()->documents()->single($name)->create($data);

@@ -10,13 +10,12 @@
 
 namespace needletail\needletail\console\controllers;
 
+use Craft;
 use needletail\needletail\jobs\IndexBucket;
 use needletail\needletail\models\BucketModel;
 use needletail\needletail\Needletail;
-
-use Craft;
-use needletail\needletail\services\Buckets;
 use yii\console\Controller;
+use yii\console\ExitCode;
 use yii\helpers\Console;
 
 /**
@@ -35,10 +34,10 @@ use yii\helpers\Console;
  *
  * ./craft needletail/default
  *
- * Actions must be in 'kebab-case' so actionDoSomething() maps to 'do-something',
+ * Actions must be in 'kebab-case' so actionReindex() maps to 'reindex',
  * and would be invoked via:
  *
- * ./craft needletail/default/do-something
+ * ./craft needletail/default/reindex
  *
  * @author    Needletail
  * @package   Needletail
@@ -46,40 +45,112 @@ use yii\helpers\Console;
  */
 class DefaultController extends Controller
 {
+    /**
+     * Flush the bucket before queueing the full reindex.
+     *
+     * Exposed as `--flush-first`.
+     *
+     * @var bool
+     */
+    public $flushFirst = false;
+
     // Public Methods
     // =========================================================================
 
     /**
-     * Handle needletail/default console commands
+     * Queue a full reindex job for a specific bucket.
      *
      * The first line of this method docblock is displayed as the description
      * of the Console Command in ./craft help
      *
-     * @return mixed
+     * @param string|null $bucketIdentifier
+     * @return int
      */
-    public function actionIndex()
+    public function actionIndex(?string $bucketIdentifier = null): int
     {
-        $bucket = Needletail::$plugin->buckets->getById(9);
+        if ($bucketIdentifier === null) {
+            $this->stderr("A bucket ID or handle is required.\n", Console::FG_RED);
+            $this->stdout("Usage: ./craft needletail/default/reindex <bucketIdOrHandle> [--flush-first=1]\n");
+
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+
+        return $this->actionReindex($bucketIdentifier);
+    }
+
+    /**
+     * Queue a full reindex job for a specific bucket.
+     *
+     * The first line of this method docblock is displayed as the description
+     * of the Console Command in ./craft help
+     *
+     * @param string $bucketIdentifier
+     * @return int
+     */
+    public function actionReindex(string $bucketIdentifier): int
+    {
+        $bucket = $this->resolveBucket($bucketIdentifier);
+
+        if ($bucket === null) {
+            $availableBuckets = array_map(function (BucketModel $bucketModel) {
+                return sprintf('%d:%s', $bucketModel->id, $bucketModel->handleWithPrefix);
+            }, Needletail::$plugin->buckets->getBuckets());
+
+            $this->stderr(sprintf("Bucket `%s` was not found.\n", $bucketIdentifier), Console::FG_RED);
+
+            if (!empty($availableBuckets)) {
+                $this->stdout("Available buckets: " . implode(', ', $availableBuckets) . "\n");
+            }
+
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+
+        if ($this->flushFirst) {
+            Needletail::$plugin->connection->truncateBucket($bucket->handleWithPrefix);
+
+            $this->stdout(sprintf(
+                "Flushed bucket `%s` before reindex.\n",
+                $bucket->handleWithPrefix
+            ), Console::FG_YELLOW);
+        }
+
         Craft::$app->getQueue()->delay(0)->push(new IndexBucket([
             'bucket' => $bucket,
             'offset' => 0,
         ]));
+
+        $this->stdout(sprintf(
+            "Queued full reindex for bucket `%s`.\n",
+            $bucket->handleWithPrefix
+        ), Console::FG_GREEN);
+
+        return ExitCode::OK;
     }
 
-    /**
-     * Handle needletail/default/do-something console commands
-     *
-     * The first line of this method docblock is displayed as the description
-     * of the Console Command in ./craft help
-     *
-     * @return mixed
-     */
-    public function actionDoSomething()
+    public function options($actionId): array
     {
-        $result = 'something';
+        $options = parent::options($actionId);
 
-        echo "Welcome to the console DefaultController actionDoSomething() method\n";
+        if (in_array($actionId, ['index', 'reindex'], true)) {
+            $options[] = 'flushFirst';
+        }
 
-        return $result;
+        return $options;
+    }
+
+    public function optionAliases(): array
+    {
+        return array_merge(parent::optionAliases(), [
+            'f' => 'flushFirst',
+        ]);
+    }
+
+    private function resolveBucket(string $bucketIdentifier): ?BucketModel
+    {
+        if (is_numeric($bucketIdentifier)) {
+            return Needletail::$plugin->buckets->getById((int)$bucketIdentifier);
+        }
+
+        return Needletail::$plugin->buckets->getByHandle($bucketIdentifier, true);
     }
 }
