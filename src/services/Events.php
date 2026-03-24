@@ -11,6 +11,7 @@ use needletail\needletail\jobs\IndexBucket;
 use needletail\needletail\jobs\IndexElement;
 use needletail\needletail\models\BucketModel;
 use needletail\needletail\Needletail;
+use yii\base\Event as YiiEvent;
 
 class Events extends Component
 {
@@ -19,9 +20,15 @@ class Events extends Component
     // Public Methods
     // =========================================================================
 
-    public function onSave(ElementEvent $event)
+    public function onSave(YiiEvent $event)
     {
-        $buckets = $this->getBucketsForElement($event->element);
+        $element = $this->getElementFromEvent($event);
+
+        if (!$element) {
+            return;
+        }
+
+        $buckets = $this->getBucketsForElement($element);
 
         if (!count($buckets) )
             return;
@@ -30,11 +37,11 @@ class Events extends Component
             if ( Needletail::$plugin->getSettings()->processSingleElementsViaQueue ){
                 \Craft::$app->getQueue()->delay(0)->push(new IndexElement([
                     'bucket' => $bucket,
-                    'elementId' => $event->element->getId(),
-                    'siteId' => $event->element->siteId
+                    'elementId' => $element->getId(),
+                    'siteId' => $element->siteId
                 ]));
             } else {
-                Needletail::$plugin->process->processSingle($bucket, $event->element);
+                Needletail::$plugin->process->processSingle($bucket, $element);
             }
         }
     }
@@ -59,9 +66,15 @@ class Events extends Component
         }
     }
 
-    public function onDelete(ElementEvent $event)
+    public function onDelete(YiiEvent $event)
     {
-        $buckets = $this->getBucketsForElement($event->element);
+        $element = $this->getElementFromEvent($event);
+
+        if (!$element) {
+            return;
+        }
+
+        $buckets = $this->getBucketsForElement($element);
 
         if (!count($buckets) )
             return;
@@ -70,10 +83,10 @@ class Events extends Component
             if ( Needletail::$plugin->getSettings()->processSingleElementsViaQueue ){
                 \Craft::$app->getQueue()->delay(0)->push(new DeleteElement([
                     'bucket' => $bucket,
-                    'elementId' => $event->element->getId()
+                    'elementId' => $element->getId()
                 ]));
             } else {
-                Needletail::$plugin->process->deleteSingle($bucket, $event->element);
+                Needletail::$plugin->process->deleteSingle($bucket, $element);
             }
         }
     }
@@ -118,6 +131,21 @@ class Events extends Component
         $this->_buckets = Needletail::$plugin->buckets->getCached();
 
         return count($this->_buckets) > 0;
+    }
+
+    private function getElementFromEvent(YiiEvent $event): ?ElementInterface
+    {
+        if ($event instanceof ElementEvent) {
+            return $event->element;
+        }
+
+        if (method_exists($event, 'getElement')) {
+            $element = $event->getElement();
+
+            return $element instanceof ElementInterface ? $element : null;
+        }
+
+        return null;
     }
 
     private function getAllBucketsForElement(\craft\base\ElementInterface $element)
