@@ -33,8 +33,8 @@ class Process extends Component
 
         if ($bucket->customMappingFile) {
             $results = array_map(function (ElementInterface $element) use ($bucket) {
-                if (file_exists(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile)) {
-                    $rendered = \Craft::$app->getView()->renderString(file_get_contents(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile), [
+                if (file_exists(\Craft::$app->path->getSiteTemplatesPath() . '/_needletail/' . $bucket->mappingTwigFile)) {
+                    $rendered = \Craft::$app->getView()->renderString(file_get_contents(\Craft::$app->path->getSiteTemplatesPath() . '/_needletail/' . $bucket->mappingTwigFile), [
                         'entry' => $element
                     ]);
 
@@ -42,7 +42,7 @@ class Process extends Component
                     $array = Json::decodeIfJson($rendered);
 
                     if (is_null($array)) {
-                        throw new \Exception('Custom mapping file is not valid JSON: '.$rendered);
+                        throw new \Exception('Custom mapping file is not valid JSON: ' . $rendered);
                     }
 
                     return array_merge([
@@ -60,15 +60,20 @@ class Process extends Component
             }, $results);
         }
 
-        // Only keep $results where there is data other than just 'id' (filter when only id is available)
-        $results = array_filter($results, function ($result) {
+        // Delete records that no longer contain searchable data, then skip them from the bulk payload.
+        $results = array_values(array_filter($results, function ($result) use ($bucket) {
             if (!is_array($result)) {
                 return false;
             }
-            // If the only key present is 'id', filter it out
-            $keys = array_keys($result);
-            return count($keys) > 1 || (count($keys) == 1 && $keys[0] !== 'id');
-        });
+
+            if ($this->resultContainsOnlyId($result)) {
+                $this->deleteSingle($bucket, null, (int)$result['id']);
+
+                return false;
+            }
+
+            return true;
+        }));
 
         if (empty($results)) {
             return;
@@ -79,12 +84,12 @@ class Process extends Component
 
     public function processSingle(BucketModel $bucket, ElementInterface $element)
     {
-        if ( $this->shouldNotPerformWriteActions() )
+        if ($this->shouldNotPerformWriteActions())
             return false;
 
         if ($bucket->customMappingFile) {
-            if (file_exists(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile)) {
-                $rendered = \Craft::$app->getView()->renderString(file_get_contents(\Craft::$app->path->getSiteTemplatesPath().'/_needletail/'.$bucket->mappingTwigFile), [
+            if (file_exists(\Craft::$app->path->getSiteTemplatesPath() . '/_needletail/' . $bucket->mappingTwigFile)) {
+                $rendered = \Craft::$app->getView()->renderString(file_get_contents(\Craft::$app->path->getSiteTemplatesPath() . '/_needletail/' . $bucket->mappingTwigFile), [
                     'entry' => $element
                 ]);
 
@@ -92,12 +97,12 @@ class Process extends Component
                 $array = Json::decodeIfJson($rendered);
 
                 if (is_null($array)) {
-                    throw new \Exception('Custom mapping file is not valid JSON: '.$rendered);
+                    throw new \Exception('Custom mapping file is not valid JSON: ' . $rendered);
                 }
 
                 $result =  array_merge([
-                        'id' => (int)$element->id,
-                    ]) + $array;
+                    'id' => (int)$element->id,
+                ]) + $array;
             } else {
                 throw new \Exception('Custom mapping file not found');
             }
@@ -107,8 +112,10 @@ class Process extends Component
             $result = $this->parseElement($element, $bucket, $mappingData);
         }
 
-        // If result only contains 'id', return early
-        if (is_array($result) && count($result) === 1 && array_key_exists('id', $result)) {
+        // If result only contains an id, remove the stale indexed record instead.
+        if (is_array($result) && $this->resultContainsOnlyId($result)) {
+            $this->deleteSingle($bucket, null, (int)$result['id']);
+
             return;
         }
 
@@ -119,18 +126,18 @@ class Process extends Component
         }
     }
 
-    public function deleteSingle(BucketModel $bucket, ElementInterface $element = null, $elementId = null)
+    public function deleteSingle(BucketModel $bucket, ?ElementInterface $element = null, $elementId = null)
     {
-        if ( $this->shouldNotPerformWriteActions() )
+        if ($this->shouldNotPerformWriteActions())
             return false;
 
-        Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $elementId ?? $element->getId());
+        try {
+            Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $elementId ?? $element->getId());
+        } catch (\Exception $e) {
+        }
     }
 
-    public function afterProcess()
-    {
-
-    }
+    public function afterProcess() {}
 
     public function prepareMappingData($data)
     {
@@ -170,9 +177,8 @@ class Process extends Component
         }
 
         return array_merge([
-                'id' => (int)$element->id,
-            ]) + $fieldData;
-
+            'id' => (int)$element->id,
+        ]) + $fieldData;
     }
 
     public function shouldNotPerformWriteActions()
@@ -190,8 +196,14 @@ class Process extends Component
         return !! Needletail::$plugin->settings->disableIndexingOnNonProduction;
     }
 
-    function replaceNewlineInQuotes($json) {
-        return preg_replace_callback('/"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/s', function($matches) {
+    private function resultContainsOnlyId(array $result)
+    {
+        return count($result) === 1 && array_key_exists('id', $result);
+    }
+
+    function replaceNewlineInQuotes($json)
+    {
+        return preg_replace_callback('/"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/s', function ($matches) {
             return '"' . str_replace("\n", "\\n", $matches[1]) . '"';
         }, $json);
     }
