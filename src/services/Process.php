@@ -72,15 +72,21 @@ class Process extends Component
             }, $results);
         }
 
-        // Only keep $results where there is data other than just 'id' (filter when only id is available)
-        $results = array_filter($results, function ($result) {
+        // Delete documents that no longer have mapped data and only keep indexable results.
+        $filteredResults = [];
+        foreach ($results as $result) {
             if (!is_array($result)) {
-                return false;
+                continue;
             }
-            // If the only key present is 'id', filter it out
-            $keys = array_keys($result);
-            return count($keys) > 1 || (count($keys) == 1 && $keys[0] !== 'id');
-        });
+
+            if ($this->resultContainsOnlyId($result)) {
+                $this->deleteSingle($bucket, null, (int) $result['id']);
+                continue;
+            }
+
+            $filteredResults[] = $result;
+        }
+        $results = $filteredResults;
 
         if (empty($results)) {
             return;
@@ -120,8 +126,9 @@ class Process extends Component
             $result = $this->parseElement($element, $bucket, $mappingData);
         }
 
-        // If result only contains 'id', return early
-        if (is_array($result) && count($result) === 1 && array_key_exists('id', $result)) {
+        // If the result only contains 'id', remove any existing indexed document instead.
+        if ($this->resultContainsOnlyId($result)) {
+            $this->deleteSingle($bucket, null, (int) $result['id']);
             return;
         }
 
@@ -134,6 +141,11 @@ class Process extends Component
             return false;
 
         Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $elementId ?? $element->getId());
+    }
+
+    private function resultContainsOnlyId($result): bool
+    {
+        return is_array($result) && count($result) === 1 && array_key_exists('id', $result);
     }
 
     public function afterProcess()
