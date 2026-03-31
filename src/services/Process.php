@@ -140,7 +140,10 @@ class Process extends Component
         if ( $this->shouldNotPerformWriteActions() )
             return false;
 
-        Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $elementId ?? $element->getId());
+        try {
+            Needletail::$plugin->connection->delete($bucket->handleWithPrefix, $elementId ?? $element->getId());
+        } catch (\Exception $e) {
+        }
     }
 
     private function resultContainsOnlyId($result): bool
