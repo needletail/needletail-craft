@@ -6,9 +6,9 @@ use Craft;
 use craft\db\Migration;
 
 /**
- * m240424_101421_add_twig_mapping_fields migration.
+ * Repairs bucket mapping columns for installs created before Install.php included them.
  */
-class m240424_101421_add_twig_mapping_fields extends Migration
+class m260415_000000_repair_bucket_mapping_columns extends Migration
 {
     /**
      * @inheritdoc
